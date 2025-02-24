@@ -9,5 +9,8 @@ package controller;
  * @author PC
  */
 public class Demo {
+    public static void main(String[] args) {
+        
+    }
     
 }
