@@ -19,6 +19,7 @@ public class Validation {
             }
         }
     }
+    
 
     public int checkValidInt(String me, String error, Integer min, Integer max) {
         while (true) {
@@ -49,4 +50,5 @@ public class Validation {
             }
         }
     }
+
 }
