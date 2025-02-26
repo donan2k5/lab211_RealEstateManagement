@@ -42,7 +42,7 @@ public class User {
         private String email;
         private String gender;
         private int roleId;
-        private int isDelete = 1; 
+        private int isDelete = 0; 
         private LocalDate createdAt = LocalDate.now(); 
         private LocalDate updatedAt = LocalDate.now(); 
 
