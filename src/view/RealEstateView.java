@@ -355,9 +355,14 @@ public class RealEstateView implements IRealEstateView {
     public void displaySearchResults(List<RealEstate> results) {
         if (results.isEmpty()) {
             System.out.println("Not any result matches.");
+            return;
         }
+        System.out.println("Results:");
+        System.out.printf("%-20s%-15s%-15s\n",
+                "Name", "Price", "Owner");
         for (RealEstate result : results) {
-            System.out.println(result.toString());
+            System.out.printf("%-20s%-15s%-15s\n",
+                result.getName(), result.getPrice(), result.getOwner());
         }
     }
 
