@@ -20,6 +20,7 @@ public class Validation {
             }
         }
     }
+    
 
     public int getValidInteger(String message) {
         int number;
