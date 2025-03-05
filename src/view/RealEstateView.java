@@ -267,9 +267,9 @@ public class RealEstateView implements IRealEstateView {
         }
     }
 
-    public String getUserChooseREType() {
+    public String getUserChooseREType(String action) {
         String typeRE = "";
-        System.out.println("Choose RE type you want to search:");
+        System.out.println("Choose RE type you want to " + action + ": ");
         System.out.println("1. Land");
         System.out.println("2. House");
         System.out.println("3. Villa");

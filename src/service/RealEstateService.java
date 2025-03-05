@@ -146,12 +146,4 @@ public class RealEstateService implements IRealEstateService {
         return results;
     }
 
-    public static void main(String[] args) {
-        RealEstateService r = new RealEstateService();
-        RealEstateView reView = new RealEstateView();
-        String typeRE = reView.getUserChooseREType();
-        Map<String, Object> criteria = reView.getUserSearchByCriteria(typeRE);
-        List<RealEstate> reList = r.searchByCriteria(criteria, typeRE);
-        reView.displaySearchResults(reList);
-    }
 }

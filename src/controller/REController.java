@@ -119,6 +119,7 @@ public class REController extends Menu<String> {
     }
 
     public void managementEditRE() {
+        
         String id = "";
         while (true) {
             id = v.getStringRegex("Enter id of RE you want to edit: ", "^.*$", "Invalid input, enter again: ");
@@ -132,7 +133,7 @@ public class REController extends Menu<String> {
     }
 
     public void managementSearchREByCriteria() {
-        String typeRE = reView.getUserChooseREType();
+        String typeRE = reView.getUserChooseREType("search");
         Map<String, Object> criteria = reView.getUserSearchByCriteria(typeRE);
         List<RealEstate> reList = reSer.searchByCriteria(criteria, typeRE);
         reView.displaySearchResults(reList);
