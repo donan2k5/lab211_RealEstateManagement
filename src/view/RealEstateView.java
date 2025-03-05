@@ -13,7 +13,7 @@ import model.House;
 import model.Land;
 import model.RealEstate;
 import model.Villa;
-import repository.RealEstateRepository;
+import repository.impl.RealEstateRepository;
 
 /**
  *
