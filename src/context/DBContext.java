@@ -1,4 +1,4 @@
- package context;
+package context;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -9,7 +9,7 @@ import java.util.logging.Logger;
 
 public abstract class DBContext<T> {
 
-    protected Connection connection;
+    public Connection connection;
 
     public DBContext() {
         try {

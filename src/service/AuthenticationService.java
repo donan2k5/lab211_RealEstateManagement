@@ -3,10 +3,10 @@ package service;
 import model.User;
 
 public interface AuthenticationService {
-    public User login(User user);
-    public User logout();
-    public User getLoggedInUser();
-    public void register(User user);
-    public User updateUser(User user);
-    public boolean deleteUser(int userId);  // Thêm phương thức xóa người dùng
+    User login(User user);
+    User logout();
+    User getLoggedInUser();
+    
+    // Thêm deleteUser cho AuthenticationService nếu cần (để đồng bộ với giao diện dự án)
+    void deleteUser(int id);
 }

@@ -4,7 +4,14 @@ import dal.UserDAO;
 import model.User;
 import repository.UserRepository;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
 public class UserRepositoryImpl implements UserRepository {
+
     private final UserDAO userDAO = new UserDAO();
 
     @Override
@@ -44,9 +51,70 @@ public class UserRepositoryImpl implements UserRepository {
     public boolean existsByEmail(String email) {
         return userDAO.existsByEmail(email);
     }
-
+    
+    // Tìm user theo ID (chỉ trả về khi user chưa bị xóa mềm: isdelete = 0)
+    public User findById(int id) {
+        String sql = "SELECT * FROM [user] WHERE userid = ? AND isdelete = 0";
+        try (PreparedStatement stm = userDAO.connection.prepareStatement(sql)) {
+            stm.setInt(1, id);
+            try (ResultSet rs = stm.executeQuery()) {
+                if (rs.next()) {
+                    return new User.UserBuilder()
+                            .userId(rs.getInt("userid"))
+                            .username(rs.getString("username"))
+                            .password(rs.getString("password"))
+                            .lastName(rs.getString("lastname"))
+                            .firstName(rs.getString("firstname"))
+                            .phone(rs.getString("phone"))
+                            .email(rs.getString("email"))
+                            .gender(rs.getString("gender"))
+                            .roleId(rs.getInt("roleid"))
+                            .delete(rs.getInt("isdelete"))
+                            .build();
+                }
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
+    
+    // Liệt kê tất cả các user chưa bị xóa mềm (isdelete = 0)
+    public List<User> listAllUsers() {
+        List<User> userList = new ArrayList<>();
+        String sql = "SELECT * FROM [user] WHERE isdelete = 0";
+        try (PreparedStatement stm = userDAO.connection.prepareStatement(sql);
+             ResultSet rs = stm.executeQuery()) {
+            while (rs.next()) {
+                User user = new User.UserBuilder()
+                        .userId(rs.getInt("userid"))
+                        .username(rs.getString("username"))
+                        .password(rs.getString("password"))
+                        .lastName(rs.getString("lastname"))
+                        .firstName(rs.getString("firstname"))
+                        .phone(rs.getString("phone"))
+                        .email(rs.getString("email"))
+                        .gender(rs.getString("gender"))
+                        .roleId(rs.getInt("roleid"))
+                        .delete(rs.getInt("isdelete"))
+                        .build();
+                userList.add(user);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return userList;
+    }
+    
+    // Xóa user theo kiểu "xóa mềm": cập nhật isdelete = 1 cho user có id cho trước
     @Override
-    public boolean deleteUser(int userId) {
-        return userDAO.deleteUser(userId);  // Gọi phương thức xóa từ UserDAO
+    public void deleteUser(int id) {
+        String sql = "UPDATE [user] SET isdelete = 1 WHERE userid = ?";
+        try (PreparedStatement stm = userDAO.connection.prepareStatement(sql)) {
+            stm.setInt(1, id);
+            stm.executeUpdate();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
     }
 }

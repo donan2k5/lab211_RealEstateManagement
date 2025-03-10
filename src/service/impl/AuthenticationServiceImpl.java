@@ -6,49 +6,41 @@ import repository.impl.UserRepositoryImpl;
 import service.AuthenticationService;
 
 public class AuthenticationServiceImpl implements AuthenticationService {
-    private final UserRepository userRepository = new UserRepositoryImpl();
+    private final UserRepository userRepo = new UserRepositoryImpl();
     private User loggedInUser = null;
-
+    
     @Override
-    public User login(User request_user) {
-        String username = request_user.getUsername();
-        String password = request_user.getPassword();
-        String hashPassword = password;
-        var oldUser = userRepository.login(username);
-        if (oldUser != null) {
-            if (hashPassword.equals(oldUser.getPassword())) {
-                var user = userRepository.findByUsername(username);
-                loggedInUser = user;
-                return user;
-            }
+    public User login(User user) {
+        String username = user.getUsername();
+        String password = user.getPassword();
+        User dbUser = userRepo.login(username);
+        if(dbUser != null && dbUser.getPassword().equals(password)) {
+            loggedInUser = userRepo.findByUsername(username);
+            return loggedInUser;
         }
         return null;
     }
-
+    
     @Override
     public User logout() {
-        User user = loggedInUser;
+        User temp = loggedInUser;
         loggedInUser = null;
-        return user;
+        return temp;
     }
-
+    
     @Override
     public User getLoggedInUser() {
         return loggedInUser;
     }
-
+    
     @Override
-    public void register(User user) {
-        userRepository.save(user);
+    public void deleteUser(int id) {
+        // Đối với AuthenticationService, chúng ta có thể delegate việc xóa sang repository
+        userRepo.deleteUser(id);
     }
-
-    @Override
-    public User updateUser(User user) {
-        return userRepository.save(user);
-    }
-
-    @Override
-    public boolean deleteUser(int userId) {
-        return userRepository.deleteUser(userId);  // Gọi phương thức xóa trong repository
+    
+    // Cho mục đích demo, cho phép set user đăng nhập từ bên ngoài
+    public void setLoggedInUser(User user) {
+        this.loggedInUser = user;
     }
 }
