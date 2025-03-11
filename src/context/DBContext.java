@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -23,7 +24,7 @@ public abstract class DBContext<T> {
         }
     }
 
-    public abstract ArrayList<T> list();
+    public abstract List<T> list();
 
     public abstract T get(int id);
 

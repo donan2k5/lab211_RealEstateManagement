@@ -1,4 +1,4 @@
-package dal;
+ package dal;
 
 import context.DBContext;
 import java.sql.Statement;
@@ -6,6 +6,8 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.List;
+
 import model.User;
 
 public class UserDAO extends DBContext<User> {
@@ -39,9 +41,12 @@ public class UserDAO extends DBContext<User> {
     }
 
     public User login(String username) {
-        String sql = "SELECT [username], [password] FROM [user] WHERE username = ? AND isdelete = 0";
+        String sql = "SELECT [username], [password] "
+                + "FROM [user] "
+                + "WHERE username = ? AND isdelete = 0";
         try (PreparedStatement stm = connection.prepareStatement(sql)) {
             stm.setString(1, username);
+
             try (ResultSet rs = stm.executeQuery()) {
                 if (rs.next()) {
                     return new User.UserBuilder()
@@ -57,19 +62,42 @@ public class UserDAO extends DBContext<User> {
     }
 
     @Override
-    public ArrayList<User> list() {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public List<User> list() {
+        List<User> userList = new ArrayList<>();
+        String sql = "SELECT * FROM [user] WHERE isdelete = 0";
+        try (PreparedStatement stm = connection.prepareStatement(sql);
+             ResultSet rs = stm.executeQuery()) {
+            while (rs.next()) {
+                User user = new User.UserBuilder()
+                        .userId(rs.getInt("userid"))
+                        .username(rs.getString("username"))
+                        .password(rs.getString("password"))
+                        .lastName(rs.getString("lastname"))
+                        .firstName(rs.getString("firstname"))
+                        .phone(rs.getString("phone"))
+                        .email(rs.getString("email"))
+                        .gender(rs.getString("gender"))
+                        .roleId(rs.getInt("roleid"))
+                        .delete(rs.getInt("isdelete"))
+                        .build();
+                userList.add(user);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return userList;
     }
 
     @Override
     public User get(int id) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return null;
     }
 
     @Override
     public User insert(User entity) {
         String sql = "INSERT INTO [user] (username, password, lastname, firstname, phone, email, gender, roleid, isdelete, created_at, updated_at) "
                 + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, GETDATE(), GETDATE())";
+
         try (PreparedStatement stm = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             stm.setString(1, entity.getUsername());
             stm.setString(2, entity.getPassword());
@@ -80,15 +108,16 @@ public class UserDAO extends DBContext<User> {
             stm.setString(7, entity.getGender());
             stm.setInt(8, entity.getRoleId());
             stm.setInt(9, entity.getIsDelete());
-            
+
             int affectedRows = stm.executeUpdate();
+
             if (affectedRows > 0) {
                 try (ResultSet rs = stm.getGeneratedKeys()) {
                     if (rs.next()) {
-                        entity.setUserId(rs.getInt(1));
+                        entity.setUserId(rs.getInt(1)); // Lấy ID của user vừa chèn
                     }
                 }
-                return entity;
+                return entity; // Trả về đối tượng đã cập nhật ID
             }
         } catch (SQLException ex) {
             System.out.println(ex);
@@ -98,7 +127,18 @@ public class UserDAO extends DBContext<User> {
 
     @Override
     public User update(User entity) {
-        String sql = "UPDATE [user] SET username = ?, password = ?, lastname = ?, firstname = ?, phone = ?, email = ?, gender = ?, roleid = ?, isdelete = ?, updated_at = GETDATE() WHERE userid = ?";
+        String sql = "UPDATE [user] "
+                + "SET username = ?, "
+                + "    password = ?, "
+                + "    lastname = ?, "
+                + "    firstname = ?, "
+                + "    phone = ?, "
+                + "    email = ?, "
+                + "    gender = ?, "
+                + "    roleid = ?, "
+                + "    isdelete = ?, "
+                + "    updated_at = GETDATE() "
+                + "WHERE userid = ?";
         try (PreparedStatement stm = connection.prepareStatement(sql)) {
             stm.setString(1, entity.getUsername());
             stm.setString(2, entity.getPassword());
@@ -110,6 +150,7 @@ public class UserDAO extends DBContext<User> {
             stm.setInt(8, entity.getRoleId());
             stm.setInt(9, entity.getIsDelete());
             stm.setInt(10, entity.getUserId());
+
             int affectedRows = stm.executeUpdate();
             return affectedRows > 0 ? entity : null;
         } catch (SQLException ex) {
@@ -120,7 +161,7 @@ public class UserDAO extends DBContext<User> {
 
     @Override
     public User delete(int id) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     public boolean existsById(int id) {
@@ -174,4 +215,5 @@ public class UserDAO extends DBContext<User> {
         }
         return false;
     }
+
 }

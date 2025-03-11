@@ -81,29 +81,7 @@ public class UserRepositoryImpl implements UserRepository {
     
     // Liệt kê tất cả các user chưa bị xóa mềm (isdelete = 0)
     public List<User> listAllUsers() {
-        List<User> userList = new ArrayList<>();
-        String sql = "SELECT * FROM [user] WHERE isdelete = 0";
-        try (PreparedStatement stm = userDAO.connection.prepareStatement(sql);
-             ResultSet rs = stm.executeQuery()) {
-            while (rs.next()) {
-                User user = new User.UserBuilder()
-                        .userId(rs.getInt("userid"))
-                        .username(rs.getString("username"))
-                        .password(rs.getString("password"))
-                        .lastName(rs.getString("lastname"))
-                        .firstName(rs.getString("firstname"))
-                        .phone(rs.getString("phone"))
-                        .email(rs.getString("email"))
-                        .gender(rs.getString("gender"))
-                        .roleId(rs.getInt("roleid"))
-                        .delete(rs.getInt("isdelete"))
-                        .build();
-                userList.add(user);
-            }
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }
-        return userList;
+        return userDAO.list();
     }
     
     // Xóa user theo kiểu "xóa mềm": cập nhật isdelete = 1 cho user có id cho trước
