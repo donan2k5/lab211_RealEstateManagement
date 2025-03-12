@@ -12,5 +12,9 @@ public interface UserRepository {
     public boolean existsByPhone(String phone);
     public boolean existsByEmail(String email);
     public void deleteUser(int id);
+    public User loadLoggedInUser();
+    public void saveLoggedInUser(User user);
+
+    public void userLogout();
 
 }
