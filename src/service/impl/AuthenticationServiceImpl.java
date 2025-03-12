@@ -6,6 +6,7 @@ import repository.impl.UserRepositoryImpl;
 import service.AuthenticationService;
 
 public class AuthenticationServiceImpl implements AuthenticationService {
+
     private final UserRepository userRepository = new UserRepositoryImpl();
     private User loggedInUser = null;
     
@@ -35,6 +36,17 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     public User getLoggedInUser() {
         return loggedInUser;
+    }
+    
+    @Override
+    public void deleteUser(int id) {
+        // Đối với AuthenticationService, chúng ta có thể delegate việc xóa sang repository
+        userRepo.deleteUser(id);
+    }
+    
+    // Cho mục đích demo, cho phép set user đăng nhập từ bên ngoài
+    public void setLoggedInUser(User user) {
+        this.loggedInUser = user;
     }
 
     @Override

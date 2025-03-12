@@ -8,10 +8,12 @@ import repository.impl.RealEstateRepository;
 import service.AuthenticationService;
 import service.impl.RealEstateService;
 import service.impl.AuthenticationServiceImpl;
+import service.impl.UserServiceImpl;
 import utils.Utils;
 import view.AuthenticationView;
 import view.Menu;
 import view.RealEstateView;
+import view.UserManagementView;
 import view.Validation;
 
 public class RealEstateController extends Menu {
@@ -21,8 +23,9 @@ public class RealEstateController extends Menu {
     private final RealEstateService reSer = new RealEstateService();
     private final RealEstateView reView = new RealEstateView();
     private final RealEstateRepository reRepo = new RealEstateRepository();
+    private final UserServiceImpl userservice = new UserServiceImpl();
     private Validation v = new Validation();
-
+    private final UserManagementView umView = new UserManagementView();
     public RealEstateController() {
         super("=== Register or Login to continue ===", new String[]{
             "Register",
@@ -179,6 +182,25 @@ public class RealEstateController extends Menu {
         };
         menu.run();
     }
+  
+    private void listAllUsers() {
+        List<User> users = userservice.getAllUsers();
+        umView.displayUserList(users);
+    }
+    
+    // Task 2: Xóa user theo kiểu xóa mềm (set isDelete = 1)
+    private void deleteUser() {
+        int id = umView.promptForUserId();
+        
+        userservice.deleteUser(id);
+       
+    }
+    
+    // Task 3: Chỉnh sửa thông tin cá nhân của user đang đăng nhập
+    private void editInformation() {
+        userservice.editInformation();
+    }
+    
 
     // Hàm của ADMIN dùng để quản lý bất động sản (Đăng + Khôi)
     private void realEstateAdminManagement() {
@@ -359,5 +381,4 @@ public class RealEstateController extends Menu {
         RealEstateController realEstateController = new RealEstateController();
         realEstateController.run();
     }
-
 }

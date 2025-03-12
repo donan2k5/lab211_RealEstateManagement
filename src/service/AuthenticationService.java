@@ -11,4 +11,7 @@ public interface AuthenticationService {
     public User getLoggedInUser();
 
     public void register(User user);
+    
+    public void deleteUser(int id);
+
 }
