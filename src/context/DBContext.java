@@ -3,14 +3,13 @@ package context;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public abstract class DBContext<T> {
 
-    public Connection connection;
+    protected Connection connection;
 
     public DBContext() {
         try {
@@ -23,7 +22,6 @@ public abstract class DBContext<T> {
             Logger.getLogger(DBContext.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-
     public abstract List<T> list();
 
     public abstract T get(int id);
@@ -34,3 +32,4 @@ public abstract class DBContext<T> {
 
     public abstract T delete(int id);
 }
+

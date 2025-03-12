@@ -181,8 +181,8 @@ public class RealEstateController extends Menu {
             }
         };
         menu.run();
-        
     }
+  
     private void listAllUsers() {
         List<User> users = userservice.getAllUsers();
         umView.displayUserList(users);
@@ -201,10 +201,6 @@ public class RealEstateController extends Menu {
         userservice.editInformation();
     }
     
-    // Main method demo
-    public static void main(String[] args) {
-        
-    }
 
     // Hàm của ADMIN dùng để quản lý bất động sản (Đăng + Khôi)
     private void realEstateAdminManagement() {
@@ -385,5 +381,4 @@ public class RealEstateController extends Menu {
         RealEstateController realEstateController = new RealEstateController();
         realEstateController.run();
     }
-
 }

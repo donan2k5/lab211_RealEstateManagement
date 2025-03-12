@@ -40,6 +40,7 @@ public class AuthenticationView {
             );
             if (userRepository.existsByUsername(username)) {
                 System.out.println("Username already exists");
+
                 continue;
             }
             break;
@@ -76,6 +77,58 @@ public class AuthenticationView {
         }
         
         return user;
+        String lastName = validation.getStringRegex(
+                "Enter last name: ",
+                "^[A-Z][a-zA-Z]+$",
+                "Invalid last name (Must start with uppercase and contain only letters), enter again: "
+        );
+
+        String firstName = validation.getStringRegex(
+                "Enter first name: ",
+                "^[A-Z][a-zA-Z]+$",
+                "Invalid first name (Must start with uppercase and contain only letters), enter again: "
+        );
+        String phone = "";
+        while (true) {
+            phone = validation.getStringRegex(
+                    "Enter phone number: ",
+                    "^(0[1-9][0-9]{8})$",
+                    "Invalid phone number (Must start with 0 and have exactly 10 digits), enter again: "
+            );
+            if (userRepository.existsByPhone(phone)) {
+                System.out.println("Phone already exist");
+                continue;
+            }
+            break;
+        }
+        String email = "";
+        while (true) {
+            email = validation.getStringRegex(
+                    "Enter email: ",
+                    "^[a-zA-Z0-9]+(\\.[a-zA-Z0-9]+)*@[a-zA-Z0-9]+(\\.[a-zA-Z0-9]+)*\\.[a-zA-Z]{2,}$",
+                    "Invalid email format, enter again: "
+            );
+            if (userRepository.existsByEmail(email)) {
+                System.out.println("Email already exist");
+                continue;
+            }
+            break;
+        }
+
+        String gender = validation.getStringRegex(
+                "Enter gender (Male/Female/Other): ",
+                "^(Male|Female|Other)$",
+                "Invalid gender (Only 'Male', 'Female', or 'Other' allowed), enter again: "
+        );
+        return new User.UserBuilder()
+                .username(username)
+                .password(password)
+                .lastName(lastName)
+                .firstName(firstName)
+                .phone(phone)
+                .email(email)
+                .gender(gender)
+                .build();
     }
 
     public void displayRegisterSuccessfully() {

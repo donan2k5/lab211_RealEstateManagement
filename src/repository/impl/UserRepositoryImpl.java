@@ -3,7 +3,6 @@ package repository.impl;
 import dal.UserDAO;
 import model.User;
 import repository.UserRepository;
-
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;

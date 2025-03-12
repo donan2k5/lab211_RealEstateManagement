@@ -2,7 +2,6 @@ package utils;
 
 import view.Validation;
 
-
 public class Utils {
 
     public static final Validation validation = new Validation();
@@ -15,4 +14,3 @@ public class Utils {
         return false;
     }
 }
-

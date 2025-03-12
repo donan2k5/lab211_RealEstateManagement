@@ -1,4 +1,5 @@
- package dal;
+package dal;
+
 
 import context.DBContext;
 import java.sql.Statement;
@@ -215,5 +216,5 @@ public class UserDAO extends DBContext<User> {
         }
         return false;
     }
-
 }
+

@@ -6,28 +6,33 @@ import repository.impl.UserRepositoryImpl;
 import service.AuthenticationService;
 
 public class AuthenticationServiceImpl implements AuthenticationService {
-    private final UserRepository userRepo = new UserRepositoryImpl();
+
+    private final UserRepository userRepository = new UserRepositoryImpl();
     private User loggedInUser = null;
     
     @Override
-    public User login(User user) {
-        String username = user.getUsername();
-        String password = user.getPassword();
-        User dbUser = userRepo.login(username);
-        if(dbUser != null && dbUser.getPassword().equals(password)) {
-            loggedInUser = userRepo.findByUsername(username);
-            return loggedInUser;
+    public User login(User request_user) {
+        String username = request_user.getUsername();
+        String password = request_user.getPassword();
+        String hashPassword = password;
+        var oldUser = userRepository.login(username);
+        if(oldUser != null) {
+            if(hashPassword.equals(oldUser.getPassword())) {
+                var user = userRepository.findByUsername(username);
+                loggedInUser = user;
+                return user;
+            }
         }
         return null;
     }
-    
+
     @Override
     public User logout() {
-        User temp = loggedInUser;
+        User user = loggedInUser;
         loggedInUser = null;
-        return temp;
+        return user;
     }
-    
+
     @Override
     public User getLoggedInUser() {
         return loggedInUser;
@@ -43,4 +48,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public void setLoggedInUser(User user) {
         this.loggedInUser = user;
     }
+
+    @Override
+    public void register(User user) {
+        userRepository.save(user);
+    }
+    
 }
