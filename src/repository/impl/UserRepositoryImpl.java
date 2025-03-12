@@ -3,15 +3,27 @@ package repository.impl;
 import dal.UserDAO;
 import model.User;
 import repository.UserRepository;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class UserRepositoryImpl implements UserRepository {
 
-    private final UserDAO userDAO = new UserDAO();
+    private User loggedInUser;
+    private static UserRepositoryImpl instance;
+
+    private UserRepositoryImpl() {
+    }
+
+    public static UserRepositoryImpl getInstance() {
+        if (instance == null) {
+            synchronized (UserDAO.class) {
+                if (instance == null) {
+                    instance = new UserRepositoryImpl();
+                }
+            }
+        }
+        return instance;
+    }
+    private final UserDAO userDAO = UserDAO.getInstance();
 
     @Override
     public User findByUsername(String username) {
@@ -50,48 +62,35 @@ public class UserRepositoryImpl implements UserRepository {
     public boolean existsByEmail(String email) {
         return userDAO.existsByEmail(email);
     }
-    
+
     // Tìm user theo ID (chỉ trả về khi user chưa bị xóa mềm: isdelete = 0)
     public User findById(int id) {
-        String sql = "SELECT * FROM [user] WHERE userid = ? AND isdelete = 0";
-        try (PreparedStatement stm = userDAO.connection.prepareStatement(sql)) {
-            stm.setInt(1, id);
-            try (ResultSet rs = stm.executeQuery()) {
-                if (rs.next()) {
-                    return new User.UserBuilder()
-                            .userId(rs.getInt("userid"))
-                            .username(rs.getString("username"))
-                            .password(rs.getString("password"))
-                            .lastName(rs.getString("lastname"))
-                            .firstName(rs.getString("firstname"))
-                            .phone(rs.getString("phone"))
-                            .email(rs.getString("email"))
-                            .gender(rs.getString("gender"))
-                            .roleId(rs.getInt("roleid"))
-                            .delete(rs.getInt("isdelete"))
-                            .build();
-                }
-            }
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }
-        return null;
+        return userDAO.get(id);
     }
-    
+
     // Liệt kê tất cả các user chưa bị xóa mềm (isdelete = 0)
     public List<User> listAllUsers() {
         return userDAO.list();
     }
-    
+
     // Xóa user theo kiểu "xóa mềm": cập nhật isdelete = 1 cho user có id cho trước
     @Override
     public void deleteUser(int id) {
-        String sql = "UPDATE [user] SET isdelete = 1 WHERE userid = ?";
-        try (PreparedStatement stm = userDAO.connection.prepareStatement(sql)) {
-            stm.setInt(1, id);
-            stm.executeUpdate();
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }
+        userDAO.delete(id);
+    }
+
+    @Override
+    public User loadLoggedInUser() {
+        return loggedInUser; // 
+    }
+
+    @Override
+    public void saveLoggedInUser(User user) {
+        this.loggedInUser = user;
+    }
+
+    @Override
+    public void userLogout() {
+        this.loggedInUser = null;
     }
 }

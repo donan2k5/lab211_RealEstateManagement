@@ -26,6 +26,7 @@ public class RealEstateController extends Menu {
     private final UserServiceImpl userservice = new UserServiceImpl();
     private Validation v = new Validation();
     private final UserManagementView umView = new UserManagementView();
+    
     public RealEstateController() {
         super("=== Register or Login to continue ===", new String[]{
             "Register",
@@ -144,7 +145,7 @@ public class RealEstateController extends Menu {
             public void execute(int ch) {
                 switch (ch) {
                     case 1 ->
-                        System.out.println("Gọi hàm update thay vì gọi nguyên 1 menu như admin");
+                        editInformation();
                     case 2 ->
                         realEstateCustomerManagement();
                     case 3 -> {
@@ -169,11 +170,11 @@ public class RealEstateController extends Menu {
             public void execute(int ch) {
                 switch (ch) {
                     case 1 ->
-                        System.out.println("Hiển thị danh sách tất cả user");
+                        listAllUsers();
                     case 2 ->
-                        System.out.println("Xóa user (set isdeleted = 1");
+                        deleteUser();
                     case 3 ->
-                        System.out.println("Gọi hàm edit thông tin cá nhân của admin");
+                        editInformation();
                     case 4 -> {
                         this.stop();
                     }
