@@ -100,7 +100,7 @@ public class Validation {
                 }
                 return temp;
             } catch (Exception e) {
-                System.out.println("INVALID");
+                System.out.println(error);
             }
         }
     }
