@@ -233,7 +233,7 @@ public class RealEstateController extends Menu {
                     case 5 ->
                         managementAddNewRE(); //Đăng cần sửa hàm này để khi add sẽ có tên chủ sở hữu chính là id của ông user này
                     case 6 ->
-                        System.out.println("Gọi hàm mua bđs"); //Khôi 
+                        managementBuyRE(); //System.out.println("Gọi hàm mua bđs"); //Khôi                      
                     case 7 ->
                         System.out.println("Gọi hàm liệt kê danh sách bđs mua, bán của user này"); //Khôi
                     case 8 -> {
@@ -355,6 +355,22 @@ public class RealEstateController extends Menu {
         reView.displaySearchResults(reList);
     }
 
+    public void managementBuyRE(){
+        String id = "";
+        while (true) {
+            id = v.getStringRegex("Enter id of RE you want to buy: ", "^.*$", "Invalid input, enter again: ");
+            if (!reSer.isExistREInSystem(id)) {
+                System.out.println("Invalid input, pls try again.");
+                continue;
+            }
+            break;
+        }
+        RealEstate estate = reSer.getREInSystem(id);
+        reView.displaySearchSingleResult(estate);
+        double deposit = v.checkValidDouble("Input deposit: ", "Value must be from 10% to 50% the price! (" + estate.getPrice()/10 + " to " + estate.getPrice()/2 + ")!", estate.getPrice()/10, estate.getPrice()/2);
+        
+    }
+    
     public static void main(String[] args) {
         RealEstateController realEstateController = new RealEstateController();
         realEstateController.run();
