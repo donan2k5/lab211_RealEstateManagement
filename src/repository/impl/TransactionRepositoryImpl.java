@@ -25,7 +25,7 @@ public class TransactionRepositoryImpl extends DBContext<Transaction> implements
     @Override
     public List<Transaction> getTransactionsByStatus(String status) {
         List<Transaction> transactions = new ArrayList<>();
-        String sql = "SELECT transactionId, buyerId, sellerId, price, status, created_at " +
+        String sql = "SELECT transactionId, buyer_id, seller_id, price, status, created_at " +
                      "FROM [transaction] WHERE status = ?";
         try (PreparedStatement stm = connection.prepareStatement(sql)) {
             stm.setString(1, status);
@@ -49,7 +49,7 @@ public class TransactionRepositoryImpl extends DBContext<Transaction> implements
     @Override
     public List<Transaction> getTransactionsByMonth(int month, int year) {
         List<Transaction> transactions = new ArrayList<>();
-        String sql = "SELECT transactionId, buyerId, sellerId, price, status, created_at " +
+        String sql = "SELECT transactionId, buyer_id, seller_id, price, status, created_at " +
                      "FROM [transaction] WHERE MONTH(created_at) = ? AND YEAR(created_at) = ? AND status = 'completed'";
         try (PreparedStatement stm = connection.prepareStatement(sql)) {
             stm.setInt(1, month);
@@ -71,8 +71,8 @@ public class TransactionRepositoryImpl extends DBContext<Transaction> implements
     private Transaction createTransactionFromResultSet(ResultSet rs) throws SQLException {
         Transaction t = new Transaction();
         t.setTransactionId(rs.getInt("transactionId"));
-        t.setBuyerId(rs.getInt("buyerId"));
-        t.setSellerId(rs.getInt("sellerId"));
+        t.setBuyerId(rs.getInt("buyer_id"));
+        t.setSellerId(rs.getInt("seller_id"));
         t.setPrice(rs.getDouble("price"));
         t.setStatus(rs.getString("status"));
         t.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
