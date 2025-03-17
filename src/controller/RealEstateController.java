@@ -1,28 +1,38 @@
 package controller;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import model.RealEstate;
+import model.Transaction;
 import model.User;
 import repository.impl.RealEstateRepository;
+import repository.impl.TransactionRepository;
 import service.AuthenticationService;
 import service.impl.RealEstateService;
 import service.impl.AuthenticationServiceImpl;
+import service.impl.TransactionService;
+import utils.TransactionValidation;
 import utils.Utils;
 import view.AuthenticationView;
 import view.Menu;
 import view.RealEstateView;
+import view.TransactionView;
 import view.Validation;
 
 public class RealEstateController extends Menu {
-
+    private final TransactionValidation tval = new TransactionValidation();
+    private final TransactionRepository transRepo = new TransactionRepository();
+    private final TransactionService transService = new TransactionService();
+    private final TransactionView tvi = new TransactionView();
     private final AuthenticationView authView = new AuthenticationView();
     private final AuthenticationService authService = new AuthenticationServiceImpl();
     private final RealEstateService reSer = new RealEstateService();
     private final RealEstateView reView = new RealEstateView();
     private final RealEstateRepository reRepo = new RealEstateRepository();
     private Validation v = new Validation();
-
+    
     public RealEstateController() {
         super("=== Register or Login to continue ===", new String[]{
             "Register",
@@ -233,9 +243,9 @@ public class RealEstateController extends Menu {
                     case 5 ->
                         managementAddNewRE(); //Đăng cần sửa hàm này để khi add sẽ có tên chủ sở hữu chính là id của ông user này
                     case 6 ->
-                        managementBuyRE(); //System.out.println("Gọi hàm mua bđs"); //Khôi                      
+                        createTransactionBuyRE(); //System.out.println("Gọi hàm mua bđs"); //Khôi                      
                     case 7 ->
-                        System.out.println("Gọi hàm liệt kê danh sách bđs mua, bán của user này"); //Khôi
+                        viewTransactionHistory(); //System.out.println("Gọi hàm liệt kê danh sách bđs mua, bán của user này"); //Khôi
                     case 8 -> {
                         this.stop();
                     }
@@ -355,20 +365,96 @@ public class RealEstateController extends Menu {
         reView.displaySearchResults(reList);
     }
 
-    public void managementBuyRE(){
-        String id = "";
+    public void createTransactionBuyRE(){
+        //counting transaction ID
+        int transID = transRepo.getLastID() + 1;
+        
+        //get exist RE ID
+        String REID = "";
         while (true) {
-            id = v.getStringRegex("Enter id of RE you want to buy: ", "^.*$", "Invalid input, enter again: ");
-            if (!reSer.isExistREInSystem(id)) {
-                System.out.println("Invalid input, pls try again.");
+            REID = v.getStringRegex("Enter id of RE you want to buy: ", "^.*$", "Invalid input, enter again: ");
+            if (!reSer.isExistREInSystem(REID)) {
+                System.out.println("Real Estate " + REID + " is not found!");
                 continue;
             }
             break;
         }
-        RealEstate estate = reSer.getREInSystem(id);
-        reView.displaySearchSingleResult(estate);
-        double deposit = v.checkValidDouble("Input deposit: ", "Value must be from 10% to 50% the price! (" + estate.getPrice()/10 + " to " + estate.getPrice()/2 + ")!", estate.getPrice()/10, estate.getPrice()/2);
+        RealEstate estate = reSer.getREInSystem(REID);
         
+        //display RE
+        reView.displaySearchSingleResult(estate);
+        
+        //get property's owner
+        int sellerID = estate.getOwner();
+        
+        //get current user id
+        int buyerID = authService.getLoggedInUser().getUserId();
+        
+        //display price and get deposit 10% -> 50% price
+        double price = estate.getPrice();
+        tvi.showMsg("This property is currently priced at " + price + "\n");
+        double deposit = v.checkValidDouble("Please enter the deposit amount: ", "Value must be from 10% to 50% the price! (" + price/10 + " to " + price/2 + ")!", price/10, price/2);
+        
+        //set status default pending
+        String status = "Pending";
+        
+        LocalDate today = LocalDate.now();
+        LocalDate expirationTime = today.plusDays(10);
+        LocalDate createTime = today;
+        LocalDate updateTime = today;
+        
+        transService.add(new Transaction(transID, REID, sellerID, buyerID, price, deposit, expirationTime, status, createTime, updateTime));
+    }
+    
+    public void viewTransactionHistory(){
+        //get current user ID
+        int userID = authService.getLoggedInUser().getUserId();
+        List<Transaction> tlist = new ArrayList();
+        
+        //add transactions with this user as buyer
+        tlist.addAll(transRepo.findTransactionByBuyerID(userID));
+        
+        //add transactions with this user as seller
+        tlist.addAll(transRepo.findTransactionBySellerID(userID));
+        
+        //display
+        tvi.displayListTransaction(tlist);
+    }
+    
+    public void checkStatusTransaction(){
+        //get and display all pending transaction
+        List<Transaction> tlist = transService.getPendingTransactionList();
+        tvi.displayListTransaction(tlist);
+        
+        boolean confirm = tval.continueConfirm("Do you want to change transaction status (Y/N)? ");
+        
+        if (confirm){
+            while (confirm){
+                //check transaction ID trong list pending
+                int transID = tval.getInt("Enter id of transaction you want to change status: ");
+                    if (!transService.isExistTransactionInList(transID, tlist)) {
+                        System.out.println("Transaction " + transID + " is not found!");
+                    } else {
+                        //neu ton tai, input new status
+                        String status = tval.getAndValidStatus("Please input new status: ");
+                        //neu status moi ko phai pending, set status va remove khoi danh sach pending
+                        Transaction changingTrans = transService.getTransactionInSystem(transID);
+                        if (!status.equalsIgnoreCase("Pending")){
+                            changingTrans.setStatus(status);
+                            tlist.remove(changingTrans);
+                            transRepo.save();
+                        }
+                        //neu status la accepted, cac transactions mua chung property se bi danh denied
+                        if (status.equalsIgnoreCase("Accepted")){
+                            for (Transaction t : transService.getPendingTransactionList()){
+                                if (t.getREID().equalsIgnoreCase(changingTrans.getREID())) t.setStatus("Denied");
+                                transRepo.save();
+                            }
+                        }
+                    }
+                confirm = tval.continueConfirm("Do you want to continue changing transaction status (Y/N)? ");
+            }
+        }
     }
     
     public static void main(String[] args) {
