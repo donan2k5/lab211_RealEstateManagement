@@ -1,5 +1,4 @@
 package model;
-
 import java.time.LocalDate;
 
 public class User {
@@ -206,5 +205,5 @@ public class User {
     public void setUpdatedAt(LocalDate updatedAt) {
         this.updatedAt = updatedAt;
     }
-    
+
 }

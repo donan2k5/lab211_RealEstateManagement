@@ -31,5 +31,5 @@ public class Land extends RealEstate{
     public String toString() {
         return super.toString() + ", " + landType;
     }
-    
+
 }

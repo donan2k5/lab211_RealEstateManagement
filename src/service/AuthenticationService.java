@@ -15,3 +15,4 @@ public interface AuthenticationService {
     public boolean isLoggedIn();
     
 }
+

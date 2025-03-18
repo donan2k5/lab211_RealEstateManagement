@@ -6,9 +6,10 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.ResultSet;
 import java.util.ArrayList;
-import java.util.List;
 
 import model.User;
+
+import java.util.List;
 
 public class UserDAO extends DBContext<User> {    
     private static UserDAO instance;
@@ -188,7 +189,6 @@ public class UserDAO extends DBContext<User> {
         }
         return null;
     }
-
     @Override
     public void delete(int id) {
         String sql = "UPDATE [user] SET isdelete = 1 WHERE userid = ?";
@@ -252,5 +252,4 @@ public class UserDAO extends DBContext<User> {
         return false;
     }
 
-    
 }
