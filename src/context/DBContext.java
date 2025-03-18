@@ -34,6 +34,3 @@ public abstract class DBContext<T> {
 
     public abstract T delete(int id);
 }
-
-    public abstract void delete(int id);
-}

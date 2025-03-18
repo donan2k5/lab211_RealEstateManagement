@@ -11,12 +11,13 @@ import model.User;
 
 import java.util.List;
 
-public class UserDAO extends DBContext<User> {    
+public class UserDAO extends DBContext<User> {
+
     private static UserDAO instance;
 
     private UserDAO() {
     }
-    
+
     public static UserDAO getInstance() {
         if (instance == null) {
             synchronized (UserDAO.class) {
@@ -189,8 +190,9 @@ public class UserDAO extends DBContext<User> {
         }
         return null;
     }
+
     @Override
-    public void delete(int id) {
+    public User delete(int id) {
         String sql = "UPDATE [user] SET isdelete = 1 WHERE userid = ?";
         try (PreparedStatement stm = connection.prepareStatement(sql)) {
             stm.setInt(1, id);
@@ -198,6 +200,7 @@ public class UserDAO extends DBContext<User> {
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
+        return null;
     }
 
     public boolean existsById(int id) {

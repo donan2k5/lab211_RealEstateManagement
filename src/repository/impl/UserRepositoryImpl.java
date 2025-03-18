@@ -10,7 +10,7 @@ public class UserRepositoryImpl implements UserRepository {
     private User loggedInUser;
     private static UserRepositoryImpl instance;
 
-    private UserRepositoryImpl() {
+    public UserRepositoryImpl() {
     }
 
     public static UserRepositoryImpl getInstance() {
