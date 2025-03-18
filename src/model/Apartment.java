@@ -15,8 +15,13 @@ public class Apartment extends House {
     public Apartment() {
     }
 
-    public Apartment(String additionalService, int floorCount, int roomCount, String ID, String Name, String owner, double price, String address, double area) {
-        super(floorCount, roomCount, ID, Name, owner, price, address, area);
+    public Apartment(String additionalService, int floorCount, int roomCount, boolean isHaveDiningroom, boolean isHaveKitchen, boolean isHaveTerrace, boolean isHaveCarPark, String ID, String name, int ownerId, double price, String street, String ward, String district, String city, double area) {
+        super(floorCount, roomCount, isHaveDiningroom, isHaveKitchen, isHaveTerrace, isHaveCarPark, ID, name, ownerId, price, street, ward, district, city, area);
+        this.additionalService = additionalService;
+    }
+    
+     public Apartment(String additionalService, int floorCount, int roomCount, boolean isHaveDiningroom, boolean isHaveKitchen, boolean isHaveTerrace, boolean isHaveCarPark, String name, int ownerId, double price, String street, String ward, String district, String city, double area) {
+        super(floorCount, roomCount, isHaveDiningroom, isHaveKitchen, isHaveTerrace, isHaveCarPark, name, ownerId, price, street, ward, district, city, area);
         this.additionalService = additionalService;
     }
 

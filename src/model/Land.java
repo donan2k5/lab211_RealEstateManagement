@@ -8,14 +8,20 @@ package model;
  *
  * @author DELL
  */
-public class Land extends RealEstate{
+public class Land extends RealEstate {
+
     private String landType;
 
     public Land() {
     }
 
-    public Land(String landType, String ID, String Name, String owner, double price, String address, double area) {
-        super(ID, Name, owner, price, address, area);
+    public Land(String landType, String ID, String name, int ownerId, double price, String street, String ward, String district, String city, double area) {
+        super(ID, name, ownerId, price, street, ward, district, city, area);
+        this.landType = landType;
+    }
+
+    public Land(String landType, String name, int ownerId, double price, String street, String ward, String district, String city, double area) {
+        super(name, ownerId, price, street, ward, district, city, area);
         this.landType = landType;
     }
 
@@ -31,5 +37,5 @@ public class Land extends RealEstate{
     public String toString() {
         return super.toString() + ", " + landType;
     }
-    
+
 }

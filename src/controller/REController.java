@@ -103,33 +103,30 @@ public class REController extends Menu<String> {
         reView.displayListVilla(reSer.getListVilla());
         reView.displayListLand(reSer.getListLand());
         reView.displayListApartment(reSer.getListApartment());
-        String id = "";
+        int id = 0;
         while (true) {
-            id = v.getStringRegex("Enter id of RE you want to delete: ", "^.*$", "Invalid input, enter again: ");
-            if (!reSer.isExistREInSystem(id)) {
-                System.out.println("Invalid input, pls try again.");
-                continue;
+            id = v.getValidInteger("Enter id of RE you want to delete: ");
+            if (!reSer.isExistREInSystem(String.valueOf(id))) {
+                System.out.println("This id not existed in system.");
             }
             break;
         }
         reRepo.readData();
-        RealEstate selectedRE = reRepo.findEstateById(id);
-        System.out.println("You have just delete " + reView.displayBasicInformation(selectedRE) + " from sytem.");
-        reSer.delete(id);
+        RealEstate selectedRE = reRepo.findEstateById(String.valueOf(id));
+        reSer.delete(String.valueOf(id));
+        reView.displayNotification(selectedRE, "delete ");
     }
 
     public void managementEditRE() {
-        
-        String id = "";
+        int id = 0;
         while (true) {
-            id = v.getStringRegex("Enter id of RE you want to edit: ", "^.*$", "Invalid input, enter again: ");
-            if (!reSer.isExistREInSystem(id)) {
-                System.out.println("Invalid input, pls try again.");
-                continue;
+            id = v.getValidInteger("Enter id of RE you want to edit: ");
+            if (!reSer.isExistREInSystem(String.valueOf(id))) {
+                System.out.println("This id not existed in system.");
             }
             break;
         }
-        reSer.update(id);
+        reSer.update(String.valueOf(id));
     }
 
     public void managementSearchREByCriteria() {

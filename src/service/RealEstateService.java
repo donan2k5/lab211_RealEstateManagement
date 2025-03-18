@@ -4,6 +4,7 @@
  */
 package service;
 
+import dal.RealEstateDAO;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -24,7 +25,7 @@ public class RealEstateService implements IRealEstateService {
     private RealEstateRepository reRepo = new RealEstateRepository();
     private List<RealEstate> reList = reRepo.readData();
     private RealEstateView reView = new RealEstateView();
-
+    private RealEstateDAO reDAO = new RealEstateDAO();
     public boolean isExistREInSystem(String id) {
         return reRepo.findEstateById(id) != null;
     }
@@ -33,7 +34,7 @@ public class RealEstateService implements IRealEstateService {
     public List<House> getListHouse() {
         List<House> houseList = new ArrayList<>();
         for (RealEstate realEstate : reList) {
-            if (realEstate.getID().startsWith("H")) {
+            if (realEstate instanceof House && !(realEstate instanceof Villa) && !(realEstate instanceof Apartment)) {
                 houseList.add((House) realEstate);
             }
         }
@@ -44,7 +45,7 @@ public class RealEstateService implements IRealEstateService {
     public List<Land> getListLand() {
         List<Land> landList = new ArrayList<>();
         for (RealEstate realEstate : reList) {
-            if (realEstate.getID().startsWith("L")) {
+            if (realEstate instanceof Land) {
                 landList.add((Land) realEstate);
             }
         }
@@ -55,7 +56,7 @@ public class RealEstateService implements IRealEstateService {
     public List<Villa> getListVilla() {
         List<Villa> villaList = new ArrayList<>();
         for (RealEstate realEstate : reList) {
-            if (realEstate.getID().startsWith("VL")) {
+            if (realEstate instanceof Villa) {
                 villaList.add((Villa) realEstate);
             }
         }
@@ -66,7 +67,7 @@ public class RealEstateService implements IRealEstateService {
     public List<Apartment> getListApartment() {
         List<Apartment> apartmentList = new ArrayList<>();
         for (RealEstate realEstate : reList) {
-            if (realEstate.getID().startsWith("APT")) {
+            if (realEstate instanceof Apartment) {
                 apartmentList.add((Apartment) realEstate);
             }
         }
@@ -80,28 +81,19 @@ public class RealEstateService implements IRealEstateService {
 
     @Override
     public void add(RealEstate t) {
-        if (isExistREInSystem(t.getID())) {
-            return;
-        }
-        reList.add(t);
-        reRepo.save();
+        reDAO.insert(t);
     }
 
     @Override
     public void delete(String id) {
-        RealEstate selectedRealEstate = reRepo.findEstateById(id);
-        if (selectedRealEstate == null) {
-            return;
-        }
-        reRepo.deleteRE(selectedRealEstate);
-        reRepo.save();
+        reDAO.delete(Integer.parseInt(id));
     }
 
     @Override
     public void update(String id) {
         RealEstate selectedRE = reRepo.findEstateById(id);
         reView.menuEdit(selectedRE);
-        reRepo.save();
+        reRepo.update(selectedRE);
     }
 
     public List<RealEstate> searchByCriteria(Map<String, Object> criteria, String typeRE) {
