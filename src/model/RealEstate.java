@@ -1,5 +1,6 @@
 package model;
 
+
 public class RealEstate {
     private String ID;
     private String name;
@@ -73,4 +74,6 @@ public class RealEstate {
     public String toString() {
         return ID + ", " + name + ", " + owner + ", " + address + ", " + price + ", " + area;
     }
+
 }
+

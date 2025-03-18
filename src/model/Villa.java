@@ -1,7 +1,4 @@
-
 package model;
-
-
 public class Villa extends House{
     private double poolArea;
 
@@ -25,3 +22,4 @@ public class Villa extends House{
         return super.toString() + ", " + poolArea;
     }
 }
+

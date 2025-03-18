@@ -32,7 +32,6 @@ public class User {
     }
 
     public static class UserBuilder {
-
         private int userId;
         private String username;
         private String password;
@@ -206,5 +205,5 @@ public class User {
     public void setUpdatedAt(LocalDate updatedAt) {
         this.updatedAt = updatedAt;
     }
-    
+
 }
