@@ -16,7 +16,6 @@ public class UserRepositoryImpl {
                     return new User.UserBuilder()
                             .userId(rs.getInt("userid"))
                             .username(rs.getString("username"))
-                            .password(rs.getString("password"))
                             .lastName(rs.getString("lastname"))
                             .firstName(rs.getString("firstname"))
                             .phone(rs.getString("phone"))
