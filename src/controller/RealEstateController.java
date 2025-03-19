@@ -2,17 +2,21 @@ package controller;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 import model.RealEstate;
 import model.User;
 import repository.impl.RealEstateRepository;
 import service.AuthenticationService;
+import service.TransactionService;
 import service.impl.RealEstateService;
 import service.impl.AuthenticationServiceImpl;
+import service.impl.TransactionServiceImpl;
 import service.impl.UserServiceImpl;
 import utils.Utils;
 import view.AuthenticationView;
 import view.Menu;
 import view.RealEstateView;
+import view.TransactionStatisticsView;
 import view.UserManagementView;
 import view.Validation;
 
@@ -26,6 +30,9 @@ public class RealEstateController extends Menu {
     private final UserServiceImpl userservice = new UserServiceImpl();
     private Validation v = new Validation();
     private final UserManagementView umView = new UserManagementView();
+    private final Scanner sc = new Scanner(System.in);
+    private final TransactionService transactionService = new TransactionServiceImpl();
+    private final TransactionStatisticsView statsView = new TransactionStatisticsView();
 
     public RealEstateController() {
         super("=== Register or Login to continue ===", new String[]{
@@ -123,7 +130,7 @@ public class RealEstateController extends Menu {
                     case 2 ->
                         realEstateAdminManagement();
                     case 3 ->
-                        System.out.println("Danh tiến hành gọi hàm để thống kê (Tạo 1 menu con để gọi tiếp)");
+                        runStatisticsMenu();
                     case 4 -> {
                         this.stop();
                     }
@@ -276,7 +283,36 @@ public class RealEstateController extends Menu {
         };
         menu.run();
     }
-
+    
+   private void runStatisticsMenu() {
+        String[] options = {
+            "Revenue Statistics",
+            "Number of Houses Sold",
+            "Houses Sold by Month",
+            "Customers Buying Real Estate by Month",
+            "Exit"
+        };
+        Menu menu = new Menu("Transaction Statistics", options) {
+            @Override
+            public void execute(int ch) {
+                switch (ch) {
+                    case 1 -> {
+                        double revenue = transactionService.getTotalRevenue();
+                        statsView.displayTotalRevenue(revenue);
+                    }
+                    case 2 -> {
+                        int totalSold = transactionService.getTotalHousesSold();
+                        statsView.displayTotalHousesSold(totalSold);
+                    }
+                    case 3 -> processHousesSoldByMonth();
+                    case 4 -> processBuyersByMonth();
+                    case 5 -> this.stop();
+                }
+            }
+        };
+        menu.run();
+    }
+   
     private void managementDisplayListREAdmin() {
         String[] options = {
             "Display list house",
@@ -385,9 +421,54 @@ public class RealEstateController extends Menu {
         List<RealEstate> reList = reSer.searchByCriteria(criteria, typeRE);
         reView.displaySearchResults(reList);
     }
+    
+    private void processHousesSoldByMonth() {
+        try {
+            System.out.print("Enter month (1-12): ");
+            int month = Integer.parseInt(sc.nextLine().trim());
+            if (month < 1 || month > 12) {
+                System.out.println("Invalid month! Please enter a value between 1 and 12.");
+                return;
+            }
+            System.out.print("Enter year (e.g., 2023): ");
+            int year = Integer.parseInt(sc.nextLine().trim());
+            if (year < 1900 || year > 9999) {
+                System.out.println("Invalid year! Please enter a realistic year.");
+                return;
+            }
+            int soldByMonth = transactionService.getHousesSoldByMonth(month, year);
+            statsView.displayHousesSoldByMonth(month, year, soldByMonth);
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid input! Please enter numeric values for month and year.");
+        }
+    }
+
+    private void processBuyersByMonth() {
+        try {
+            System.out.print("Enter month (1-12): ");
+            int month = Integer.parseInt(sc.nextLine().trim());
+            if (month < 1 || month > 12) {
+                System.out.println("Invalid month! Please enter a value between 1 and 12.");
+                return;
+            }
+            System.out.print("Enter year (e.g., 2023): ");
+            int year = Integer.parseInt(sc.nextLine().trim());
+            if (year < 1900 || year > 9999) {
+                System.out.println("Invalid year! Please enter a realistic year.");
+                return;
+            }
+            var buyers = transactionService.getBuyersByMonth(month, year);
+            statsView.displayBuyersByMonth(month, year, buyers);
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid input! Please enter numeric values for month and year.");
+        }
+    }
+    
+    
 
     public static void main(String[] args) {
         RealEstateController realEstateController = new RealEstateController();
         realEstateController.run();
     }
 }
+    
