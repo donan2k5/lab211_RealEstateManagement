@@ -14,6 +14,9 @@ import model.Land;
 import model.RealEstate;
 import model.Villa;
 import repository.impl.RealEstateRepository;
+import repository.UserRepository;
+import repository.impl.RealEstateRepository;
+import repository.impl.UserRepositoryImpl;
 
 /**
  *
@@ -23,26 +26,10 @@ public class RealEstateView implements IRealEstateView {
 
     private RealEstateRepository reRepo = new RealEstateRepository();
     private Validation v = new Validation();
+    private UserRepository userRepository = new UserRepositoryImpl();
 
     {
         reRepo.readData();
-    }
-
-    @Override
-    public void displayListHouse(List<House> houseList) {
-        if (houseList.isEmpty()) {
-            System.out.println("Not exist any house in system.");
-            return;
-        }
-        System.out.println("House list:");
-        System.out.printf("%-10s%-20s%-15s%-25s%-15s%-15s%-15s%-10s\n",
-                "Id", "Name", "Owner", "Address",
-                "Price", "Area", "FloorCount", "RoomCount");
-        for (House house : houseList) {
-            System.out.printf("%-10s%-20s%-15s%-25s%-15s%-15s%-15s%-10s\n",
-                    house.getID(), house.getName(), house.getOwner(), house.getAddress(),
-                    house.getPrice(), house.getArea(), house.getFloorCount(), house.getRoomCount());
-        }
     }
 
     @Override
@@ -52,13 +39,38 @@ public class RealEstateView implements IRealEstateView {
             return;
         }
         System.out.println("Land list:");
-        System.out.printf("%-10s%-20s%-15s%-25s%-15s%-15s%-15s\n",
-                "Id", "Name", "Owner", "Address",
-                "Price", "Area", "LandType");
+        System.out.printf("%-10s%-60s%-10s%-15s%-15s%-20s%-50s\n",
+                "Id", "Name", "OwnerID",
+                "Price", "Area", "LandType", "Address");
         for (Land land : landList) {
-            System.out.printf("%-10s%-20s%-15s%-25s%-15s%-15s%-15s\n",
-                    land.getID(), land.getName(), land.getOwner(), land.getAddress(),
-                    land.getPrice(), land.getArea(), land.getLandType());
+            System.out.printf("%-10s%-60s%-10s%-15s%-15s%-20s%-50s\n",
+                    land.getID(), land.getName(), land.getOwner(),
+                    land.getPrice(), land.getArea(), land.getLandType(), land.getStreet() + "," + land.getWard() + "," + land.getDistrict() + "," + land.getCity());
+        }
+    }
+
+    public String displayStatus(boolean status) {
+        return status ? "Yes" : "No";
+    }
+
+    @Override
+    public void displayListHouse(List<House> houseList) {
+        if (houseList.isEmpty()) {
+            System.out.println("Not exist any house in system.");
+            return;
+        }
+        System.out.println("House list:");
+        System.out.printf("%-10s%-60s%-10s%-15s%-15s%-10s%-10s%-30s%-20s%-20s%-20s%-50s\n",
+                "Id", "Name", "OwnerID", "Price", "Area", "Floor", "Room", "isHaveDiningRoom", "isHaveKitchen", "isHaveTerrace", "isHaveCar Park", "Address");
+
+        for (House house : houseList) {
+            String address = house.getStreet() + "," + house.getWard() + "," + house.getDistrict() + "," + house.getCity();
+            System.out.printf("%-10s%-60s%-10s%-15s%-15s%-10s%-10s%-30s%-20s%-20s%-20s%-50s\n",
+                    house.getID(), house.getName(), house.getOwner(),
+                    house.getPrice(), house.getArea(), house.getFloorCount(), house.getRoomCount(),
+                    displayStatus(house.isIsHaveDiningroom()), displayStatus(house.isIsHaveKitchen()),
+                    displayStatus(house.isIsHaveTerrace()), displayStatus(house.isIsHaveCarPark()),
+                    address);
         }
     }
 
@@ -69,13 +81,16 @@ public class RealEstateView implements IRealEstateView {
             return;
         }
         System.out.println("Villa list:");
-        System.out.printf("%-10s%-20s%-15s%-25s%-15s%-15s%-15s%-15s%-15s\n",
-                "Id", "Name", "Owner", "Address",
-                "Price", "Area", "FloorCount", "RoomCount", "PoolArea");
+        System.out.printf("%-10s%-60s%-10s%-15s%-15s%-15s%-10s%-10s%-30s%-20s%-20s%-20s%-50s\n",
+                "Id", "Name", "OwnerID", "Price", "Area", "PoolArea", "Floor", "Room", "isHaveDiningRoom", "isHaveKitchen", "isHaveTerrace", "isHaveCar Park", "Address");
         for (Villa villa : villaList) {
-            System.out.printf("%-10s%-20s%-15s%-25s%-15s%-15s%-15s%-15s%-15s\n",
-                    villa.getID(), villa.getName(), villa.getOwner(), villa.getAddress(),
-                    villa.getPrice(), villa.getArea(), villa.getFloorCount(), villa.getRoomCount(), villa.getPoolArea());
+            String address = villa.getStreet() + "," + villa.getWard() + "," + villa.getDistrict() + "," + villa.getCity();
+            System.out.printf("%-10s%-60s%-10s%-15s%-15s%-15s%-10s%-10s%-30s%-20s%-20s%-20s%-50s\n",
+                    villa.getID(), villa.getName(), villa.getOwner(),
+                    villa.getPrice(), villa.getArea(), villa.getPoolArea(), villa.getFloorCount(), villa.getRoomCount(),
+                    displayStatus(villa.isIsHaveDiningroom()), displayStatus(villa.isIsHaveKitchen()),
+                    displayStatus(villa.isIsHaveTerrace()), displayStatus(villa.isIsHaveCarPark()),
+                    address);
         }
     }
 
@@ -86,95 +101,109 @@ public class RealEstateView implements IRealEstateView {
             return;
         }
         System.out.println("Apartment list:");
-        System.out.printf("%-10s%-20s%-15s%-25s%-15s%-15s%-15s%-15s%-15s\n",
-                "Id", "Name", "Owner", "Address",
-                "Price", "Area", "FloorCount", "RoomCount", "AdditionalService");
+        System.out.printf("%-10s%-60s%-10s%-15s%-15s%-10s%-10s%-30s%-20s%-20s%-20s%-30s%-50s\n",
+                "Id", "Name", "OwnerID", "Price", "Area", "Floor", "Room", "isHaveDiningRoom", "isHaveKitchen", "isHaveTerrace", "isHaveCar Park", "AddiotinalService", "Address");
         for (Apartment apartment : apartmentList) {
-            System.out.printf("%-10s%-20s%-15s%-25s%-15s%-15s%-15s%-15s%-15s\n",
-                    apartment.getID(), apartment.getName(), apartment.getOwner(), apartment.getAddress(),
-                    apartment.getPrice(), apartment.getArea(), apartment.getFloorCount(), apartment.getRoomCount(), apartment.getAdditionalService());
+            String address = apartment.getStreet() + "," + apartment.getWard() + "," + apartment.getDistrict() + "," + apartment.getCity();
+            System.out.printf("%-10s%-60s%-10s%-15s%-15s%-10s%-10s%-30s%-20s%-20s%-20s%-30s%-50s\n",
+                    apartment.getID(), apartment.getName(), apartment.getOwner(),
+                    apartment.getPrice(), apartment.getArea(), apartment.getFloorCount(), apartment.getRoomCount(),
+                    displayStatus(apartment.isIsHaveDiningroom()), displayStatus(apartment.isIsHaveKitchen()),
+                    displayStatus(apartment.isIsHaveTerrace()), displayStatus(apartment.isIsHaveCarPark()), apartment.getAdditionalService(),
+                    address);
         }
     }
 
-    public Land getInformationLand() {
-        String id = "";
+    private int getOwnerId() {
+        int ownerId;
         while (true) {
-            id = v.getStringRegex("Enter house id: ", "^L-\\d{4}$", "Invalid input, enter again: ");
-            if (reRepo.findEstateById(id) != null) {
-                System.out.println("This land already exist in system.");
-                continue;
+            ownerId = v.getValidInteger("Enter id of owner:");
+            if (userRepository.existsById(ownerId)) {
+                return ownerId;
             }
-            break;
+            System.out.println("Id not exist in system, pls try again.");
         }
-        String name = v.getStringRegex("Enter name of house: ", "^.*$", "Invalid input, enter again: ");
-        String owner = v.getStringRegex("Enter name of owner: ", "^.*$", "Invalid input, enter again: ");
+    }
+
+    public Land getInformationLand(String role) {
+        String name = v.getStringRegex("Enter name of land: ", "^.*$", "Invalid input, enter again: ");
         double price = v.getValidDouble("Enter price of the land: ");
-        String address = v.getStringRegex("Enter address of land: ", "^.*$", "Invalid input, enter again: ");
+        String street = v.getStringRegex("Enter street of land: ", "^.*$", "Invalid input, enter again: ");
+        String ward = v.getStringRegex("Enter ward of land: ", "^.*$", "Invalid input, enter again: ");
+        String district = v.getStringRegex("Enter district of land: ", "^.*$", "Invalid input, enter again: ");
+        String city = v.getStringRegex("Enter city of land: ", "^.*$", "Invalid input, enter again: ");
         double area = v.getValidDouble("Enter area of the land: ");
         String landType = v.getStringRegex("Enter type of land: ", "^.*$", "Invalid input, enter again: ");
-        return new Land(landType, id, name, owner, price, address, area);
+        if (role.equals("admin")) {
+            int ownerId = this.getOwnerId();
+            return new Land(landType, name, ownerId, price, street, ward, district, city, area);
+        }
+        return new Land(landType, name, price, street, ward, district, city, area);
     }
 
-    public House getInformationHouse() {
-        String houseId = "";
-        while (true) {
-            houseId = v.getStringRegex("Enter house id: ", "^H-\\d{4}$", "Invalid input, enter again: ");
-            if (reRepo.findEstateById(houseId) != null) {
-                System.out.println("This house already exist in system.");
-                continue;
-            }
-            break;
-        }
+    public House getInformationHouse(String role) {
         String houseName = v.getStringRegex("Enter name of house: ", "^.*$", "Invalid input, enter again: ");
-        String owner = v.getStringRegex("Enter name of owner: ", "^.*$", "Invalid input, enter again: ");
         double price = v.getValidDouble("Enter price of the house: ");
-        String address = v.getStringRegex("Enter address of house: ", "^.*$", "Invalid input, enter again: ");
+        String street = v.getStringRegex("Enter street of house: ", "^.*$", "Invalid input, enter again: ");
+        String ward = v.getStringRegex("Enter ward of house: ", "^.*$", "Invalid input, enter again: ");
+        String district = v.getStringRegex("Enter district of house: ", "^.*$", "Invalid input, enter again: ");
+        String city = v.getStringRegex("Enter city of house: ", "^.*$", "Invalid input, enter again: ");
         double area = v.getValidDouble("Enter area of the house: ");
         int floorCount = v.getValidInteger("Enter number of floor: ");
         int roomCoount = v.getValidInteger("Enter number of room: ");
-        return new House(floorCount, roomCoount, houseId, houseName, owner, price, address, area);
+        boolean diningroom = this.getUserChooseYesNo("diningroom");
+        boolean kitchen = this.getUserChooseYesNo("kitchen");
+        boolean terrace = this.getUserChooseYesNo("terrace");
+        boolean car_park = this.getUserChooseYesNo("carpark");
+        if (role.equals("admin")) {
+            int ownerId = this.getOwnerId();
+            return new House(floorCount, roomCoount, diningroom, kitchen, terrace, car_park, houseName, ownerId, price, street, ward, district, city, area);
+        }
+        return new House(floorCount, roomCoount, diningroom, kitchen, terrace, car_park, houseName, price, street, ward, district, city, area);
     }
 
-    public Apartment getInformationApartment() {
-        String id = "";
-        while (true) {
-            id = v.getStringRegex("Enter apartment id: ", "^APT-\\d{4}$", "Invalid input, enter again: ");
-            if (reRepo.findEstateById(id) != null) {
-                System.out.println("This apartment already exist in system.");
-                continue;
-            }
-            break;
-        }
+    public Apartment getInformationApartment(String role) {
         String name = v.getStringRegex("Enter name of apartment: ", "^.*$", "Invalid input, enter again: ");
-        String owner = v.getStringRegex("Enter name of owner: ", "^.*$", "Invalid input, enter again: ");
         double price = v.getValidDouble("Enter price of the apartment: ");
-        String address = v.getStringRegex("Enter address of apartment: ", "^.*$", "Invalid input, enter again: ");
+        String street = v.getStringRegex("Enter street of house: ", "^.*$", "Invalid input, enter again: ");
+        String ward = v.getStringRegex("Enter ward of house: ", "^.*$", "Invalid input, enter again: ");
+        String district = v.getStringRegex("Enter district of house: ", "^.*$", "Invalid input, enter again: ");
+        String city = v.getStringRegex("Enter city of house: ", "^.*$", "Invalid input, enter again: ");
         double area = v.getValidDouble("Enter area of the apartment: ");
         int floorCount = v.getValidInteger("Enter number of floor: ");
         int roomCoount = v.getValidInteger("Enter number of room: ");
         String additionalService = v.getStringRegex("Enter service: ", "^.*$", "Invalid input, enter again: ");
-        return new Apartment(additionalService, floorCount, roomCoount, id, name, owner, price, address, area);
+        boolean diningroom = this.getUserChooseYesNo("diningroom");
+        boolean kitchen = this.getUserChooseYesNo("kitchen");
+        boolean terrace = this.getUserChooseYesNo("terrace");
+        boolean car_park = this.getUserChooseYesNo("carpark");
+        if (role.equals("admin")) {
+            int ownerId = this.getOwnerId();
+            return new Apartment(additionalService, floorCount, roomCoount, diningroom, kitchen, terrace, car_park, name, ownerId, price, street, ward, district, city, area);
+        }
+        return new Apartment(additionalService, floorCount, roomCoount, diningroom, kitchen, terrace, car_park, name, price, street, ward, district, city, area);
     }
 
-    public Villa getInformationVilla() {
-        String id = "";
-        while (true) {
-            id = v.getStringRegex("Enter villa id: ", "^VL-\\d{4}$", "Invalid input, enter again: ");
-            if (reRepo.findEstateById(id) != null) {
-                System.out.println("This villa already exist in system.");
-                continue;
-            }
-            break;
-        }
+    public Villa getInformationVilla(String role) {
         String name = v.getStringRegex("Enter name of villa: ", "^.*$", "Invalid input, enter again: ");
-        String owner = v.getStringRegex("Enter name of owner: ", "^.*$", "Invalid input, enter again: ");
         double price = v.getValidDouble("Enter price of the villa: ");
-        String address = v.getStringRegex("Enter address of villa: ", "^.*$", "Invalid input, enter again: ");
+        String street = v.getStringRegex("Enter street of house: ", "^.*$", "Invalid input, enter again: ");
+        String ward = v.getStringRegex("Enter ward of house: ", "^.*$", "Invalid input, enter again: ");
+        String district = v.getStringRegex("Enter district of house: ", "^.*$", "Invalid input, enter again: ");
+        String city = v.getStringRegex("Enter city of house: ", "^.*$", "Invalid input, enter again: ");
         double area = v.getValidDouble("Enter area of the villa: ");
         int floorCount = v.getValidInteger("Enter number of floor: ");
         int roomCoount = v.getValidInteger("Enter number of room: ");
         double poolArea = v.getValidDouble("Enter area pool of the villa: ");
-        return new Villa(poolArea, floorCount, roomCoount, id, name, owner, price, address, area);
+        boolean diningroom = this.getUserChooseYesNo("diningroom");
+        boolean kitchen = this.getUserChooseYesNo("kitchen");
+        boolean terrace = this.getUserChooseYesNo("terrace");
+        boolean car_park = this.getUserChooseYesNo("carpark");
+        if (role.equals("admin")) {
+            int ownerId = this.getOwnerId();
+            return new Villa(poolArea, floorCount, roomCoount, diningroom, kitchen, terrace, car_park, name, ownerId, price, street, ward, district, city, area);
+        }
+        return new Villa(poolArea, floorCount, roomCoount, diningroom, kitchen, terrace, car_park, name, price, street, ward, district, city, area);
     }
 
     public void addSuccessRE(String type) {
@@ -193,24 +222,31 @@ public class RealEstateView implements IRealEstateView {
             System.out.println("1. Save changes");
             System.out.println("2. Name");
             System.out.println("3. Owner");
-            System.out.println("4. Address");
-            System.out.println("5. Price");
-            System.out.println("6. Area");
+            System.out.println("4. Street");
+            System.out.println("5. Ward");
+            System.out.println("6. District");
+            System.out.println("7. City");
+            System.out.println("8. Price");
+            System.out.println("9. Area");
             if (re instanceof Land) {
-                System.out.println("7. Land type");
+                System.out.println("10. Land type");
             } else {
-                System.out.println("7. Numbers of floor");
-                System.out.println("8. Numbers of room");
+                System.out.println("10. Numbers of floor");
+                System.out.println("11. Numbers of room");
+                System.out.println("12. Diningroom");
+                System.out.println("13. Kitchen");
+                System.out.println("14. Terrace");
+                System.out.println("15. Car park");
                 if (re instanceof Villa) {
-                    System.out.println("9. Area of pool");
+                    System.out.println("16. Area of pool");
                 } else if (re instanceof Apartment) {
-                    System.out.println("9. Service");
+                    System.out.println("16. Service");
                 }
             }
 
             int choice = v.getValidInteger("Enter selection: ");
-            if ((re instanceof Land && choice > 7) || (re instanceof House && choice > 8)
-                    || (re instanceof Villa && choice > 9) || (re instanceof Apartment && choice > 9)) {
+            if ((re instanceof Land && choice > 10) || (re instanceof House && choice > 15)
+                    || (re instanceof Villa && choice > 16) || (re instanceof Apartment && choice > 16)) {
                 System.out.println("Invalid choice for this type of real estate. Please try again.");
                 continue;
             }
@@ -224,22 +260,34 @@ public class RealEstateView implements IRealEstateView {
                     re.setName(newName);
                 }
                 case 3 -> {
-                    String newOwner = v.getStringRegex("Enter new owner: ", "^.*$", "Invalid input, enter again: ");
-                    re.setOwner(newOwner);
+                    int newOwnerId = this.getOwnerId();
+                    re.setOwnerId(newOwnerId);
                 }
                 case 4 -> {
-                    String newAddress = v.getStringRegex("Enter new address: ", "^.*$", "Invalid input, enter again: ");
-                    re.setAddress(newAddress);
+                    String newStreet = v.getStringRegex("Enter new street: ", "^.*$", "Invalid input, enter again: ");
+                    re.setStreet(newStreet);
                 }
                 case 5 -> {
+                    String newWard = v.getStringRegex("Enter new ward: ", "^.*$", "Invalid input, enter again: ");
+                    re.setWard(newWard);
+                }
+                case 6 -> {
+                    String newDistrict = v.getStringRegex("Enter new district: ", "^.*$", "Invalid input, enter again: ");
+                    re.setDistrict(newDistrict);
+                }
+                case 7 -> {
+                    String newCity = v.getStringRegex("Enter new city: ", "^.*$", "Invalid input, enter again: ");
+                    re.setCity(newCity);
+                }
+                case 8 -> {
                     double newPrice = v.getValidDouble("Enter new price: ");
                     re.setPrice(newPrice);
                 }
-                case 6 -> {
+                case 9 -> {
                     double newArea = v.getValidDouble("Enter new area: ");
                     re.setArea(newArea);
                 }
-                case 7 -> {
+                case 10 -> {
                     if (re instanceof Land land) {
                         String newLandType = v.getStringRegex("Enter new type of land: ", "^.*$", "Invalid input, enter again: ");
                         land.setLandType(newLandType);
@@ -248,11 +296,27 @@ public class RealEstateView implements IRealEstateView {
                     int newFloorCount = v.getValidInteger("Enter new number of floor: ");
                     ((House) re).setFloorCount(newFloorCount);
                 }
-                case 8 -> {
+                case 11 -> {
                     int newRoomCount = v.getValidInteger("Enter new number of room: ");
                     ((House) re).setRoomCount(newRoomCount);
                 }
-                case 9 -> {
+                case 12 -> {
+                    boolean isHaveDiningRoom = getUserChooseYesNo("diningroom");
+                    ((House) re).setIsHaveDiningroom(isHaveDiningRoom);
+                }
+                case 13 -> {
+                    boolean isHaveKitchen = getUserChooseYesNo("kitchen");
+                    ((House) re).setIsHaveKitchen(isHaveKitchen);
+                }
+                case 14 -> {
+                    boolean isHaveTerrace = getUserChooseYesNo("terrace");
+                    ((House) re).setIsHaveTerrace(isHaveTerrace);
+                }
+                case 15 -> {
+                    boolean isHaveCarPark = getUserChooseYesNo("car park");
+                    ((House) re).setIsHaveCarPark(isHaveCarPark);
+                }
+                case 16 -> {
                     if (re instanceof Villa villa) {
                         double newPoolArea = v.getValidDouble("Enter new pool area: ");
                         villa.setPoolArea(newPoolArea);
@@ -267,9 +331,9 @@ public class RealEstateView implements IRealEstateView {
         }
     }
 
-    public String getUserChooseREType() {
+    public String getUserChooseREType(String action) {
         String typeRE = "";
-        System.out.println("Choose RE type you want to search:");
+        System.out.println("Choose RE type you want to " + action + ": ");
         System.out.println("1. Land");
         System.out.println("2. House");
         System.out.println("3. Villa");
@@ -362,11 +426,44 @@ public class RealEstateView implements IRealEstateView {
                 "Name", "Price", "Owner");
         for (RealEstate result : results) {
             System.out.printf("%-20s%-15s%-15s\n",
-                result.getName(), result.getPrice(), result.getOwner());
+                    result.getName(), result.getPrice(), result.getOwner());
+        }
+    }
+
+    public boolean getUserChooseYesNo(String att) {
+        boolean result = false;
+        System.out.println("Is have " + att + "?");
+        System.out.println("1. Yes");
+        System.out.println("2. No");
+        int choice = 0;
+        do {
+            choice = v.getValidInteger("Enter your selection: ");
+            switch (choice) {
+                case 1:
+                    result = true;
+                    break;
+                case 2:
+                    result = false;
+                    break;
+                default:
+                    System.out.println("Invalid input, pls try again.");
+            }
+        } while (choice > 2);
+        return result;
+    }
+
+    public void displayNotification(RealEstate r, String action) {
+        if (r == null) {
+            System.out.println("You " + action + "failed.");
+        } else {
+            System.out.println("You " + action + "success.");
         }
     }
 
     public static void main(String[] args) {
-        RealEstateView r = new RealEstateView();
+        Validation v = new Validation();
+        RealEstateView rv = new RealEstateView();
+        boolean result = rv.getUserChooseYesNo("ạd");
+        System.out.println(result);
     }
 }

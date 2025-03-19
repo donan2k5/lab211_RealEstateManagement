@@ -3,7 +3,8 @@ package repository;
 import model.User;
 
 public interface UserRepository {
-    User findById(int buyerId);
+
+    public User findById(int buyerId);
     public User findByUsername(String username);
     public User login(String username);
     public User save(User user);

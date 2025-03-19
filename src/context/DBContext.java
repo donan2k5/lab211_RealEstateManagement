@@ -9,9 +9,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public abstract class DBContext<T> {
-
+    
     public Connection connection;
-
+    
     public DBContext() {
         try {
             String username = "sa";

@@ -1,9 +1,0 @@
-L-5678, Residential, Bob, 456 Suburb, 80000.0, 1200.0, Residential
-H-2345, Townhouse, Charlie, 789 City Center, 150000.0, 250.0, 3, 6
-H-6789, Modern Town, David, 246 Downtown, 180000.0, 300.0, 2, 7
-VL-3456, Beachfront Villa, Emma, 135 Ocean View, 750000.0, 600.0, 3, 10, 150.0
-VL-7890, Luxury Villa, Frank, 579 Hillside, 900000.0, 800.0, 4, 12, 200.0
-APT-4567, Skyline Apartment, Grace, 101 Skyscraper, 250000.0, 180.0, 25, 80, Gym, Swimming Pool
-APT-8901, Penthouse, Henry, 202 Highrise, 500000.0, 220.0, 30, 90, Spa, Rooftop Garden
-L-1122, Industrial Land, Irene, 303 Industrial Zone, 60000.0, 1500.0, Commercial
-H-3344, Suburban House, Jack, 404 Green Valley, 130000.0, 280.0, 1, 5
