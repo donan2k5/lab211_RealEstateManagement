@@ -40,6 +40,16 @@ public class House extends RealEstate {
         this.isHaveCarPark = isHaveCarPark;
     }
 
+    public House(int floorCount, int roomCount, boolean isHaveDiningroom, boolean isHaveKitchen, boolean isHaveTerrace, boolean isHaveCarPark, String name, double price, String street, String ward, String district, String city, double area) {
+        super(name, price, street, ward, district, city, area);
+        this.floorCount = floorCount;
+        this.roomCount = roomCount;
+        this.isHaveDiningroom = isHaveDiningroom;
+        this.isHaveKitchen = isHaveKitchen;
+        this.isHaveTerrace = isHaveTerrace;
+        this.isHaveCarPark = isHaveCarPark;
+    }
+
     public boolean isIsHaveDiningroom() {
         return isHaveDiningroom;
     }

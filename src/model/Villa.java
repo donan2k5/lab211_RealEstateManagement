@@ -25,6 +25,11 @@ public class Villa extends House {
         this.poolArea = poolArea;
     }
 
+    public Villa(double poolArea, int floorCount, int roomCount, boolean isHaveDiningroom, boolean isHaveKitchen, boolean isHaveTerrace, boolean isHaveCarPark, String name, double price, String street, String ward, String district, String city, double area) {
+        super(floorCount, roomCount, isHaveDiningroom, isHaveKitchen, isHaveTerrace, isHaveCarPark, name, price, street, ward, district, city, area);
+        this.poolArea = poolArea;
+    }
+
     public double getPoolArea() {
         return poolArea;
     }

@@ -25,6 +25,11 @@ public class Land extends RealEstate {
         this.landType = landType;
     }
 
+    public Land(String landType, String name, double price, String street, String ward, String district, String city, double area) {
+        super(name, price, street, ward, district, city, area);
+        this.landType = landType;
+    }
+
     public String getLandType() {
         return landType;
     }

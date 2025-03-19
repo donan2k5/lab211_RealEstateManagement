@@ -19,9 +19,14 @@ public class Apartment extends House {
         super(floorCount, roomCount, isHaveDiningroom, isHaveKitchen, isHaveTerrace, isHaveCarPark, ID, name, ownerId, price, street, ward, district, city, area);
         this.additionalService = additionalService;
     }
-    
-     public Apartment(String additionalService, int floorCount, int roomCount, boolean isHaveDiningroom, boolean isHaveKitchen, boolean isHaveTerrace, boolean isHaveCarPark, String name, int ownerId, double price, String street, String ward, String district, String city, double area) {
+
+    public Apartment(String additionalService, int floorCount, int roomCount, boolean isHaveDiningroom, boolean isHaveKitchen, boolean isHaveTerrace, boolean isHaveCarPark, String name, int ownerId, double price, String street, String ward, String district, String city, double area) {
         super(floorCount, roomCount, isHaveDiningroom, isHaveKitchen, isHaveTerrace, isHaveCarPark, name, ownerId, price, street, ward, district, city, area);
+        this.additionalService = additionalService;
+    }
+
+    public Apartment(String additionalService, int floorCount, int roomCount, boolean isHaveDiningroom, boolean isHaveKitchen, boolean isHaveTerrace, boolean isHaveCarPark, String name, double price, String street, String ward, String district, String city, double area) {
+        super(floorCount, roomCount, isHaveDiningroom, isHaveKitchen, isHaveTerrace, isHaveCarPark, name, price, street, ward, district, city, area);
         this.additionalService = additionalService;
     }
 

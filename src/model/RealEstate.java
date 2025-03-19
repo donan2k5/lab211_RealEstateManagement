@@ -46,6 +46,16 @@ public class RealEstate {
         this.area = area;
     }
 
+    public RealEstate(String name, double price, String street, String ward, String district, String city, double area) {
+        this.name = name;
+        this.price = price;
+        this.street = street;
+        this.ward = ward;
+        this.district = district;
+        this.city = city;
+        this.area = area;
+    }
+
     public int getOwner() {
         return ownerId;
     }

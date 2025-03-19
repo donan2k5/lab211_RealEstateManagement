@@ -72,19 +72,19 @@ public class REController extends Menu<String> {
             public void execute(int ch) {
                 switch (ch) {
                     case 1 -> {
-                        reSer.add(reView.getInformationHouse());
+                        reSer.add(reView.getInformationHouse("admin"));
                         reView.addSuccessRE("HOUSE");
                     }
                     case 2 -> {
-                        reSer.add(reView.getInformationVilla());
+                        reSer.add(reView.getInformationVilla("admin"));
                         reView.addSuccessRE("VILLA");
                     }
                     case 3 -> {
-                        reSer.add(reView.getInformationLand());
+                        reSer.add(reView.getInformationLand("admin"));
                         reView.addSuccessRE("LAND");
                     }
                     case 4 -> {
-                        reSer.add(reView.getInformationApartment());
+                        reSer.add(reView.getInformationApartment("admin"));
                         reView.addSuccessRE("APARTMENT");
                     }
                     case 5 -> {
@@ -123,6 +123,7 @@ public class REController extends Menu<String> {
             id = v.getValidInteger("Enter id of RE you want to edit: ");
             if (!reSer.isExistREInSystem(String.valueOf(id))) {
                 System.out.println("This id not existed in system.");
+                continue;
             }
             break;
         }
