@@ -1,4 +1,5 @@
 package model;
+
 import java.time.LocalDate;
 
 public class User {
@@ -42,9 +43,9 @@ public class User {
         private String email;
         private String gender;
         private int roleId;
-        private int isDelete = 0; 
-        private LocalDate createdAt = LocalDate.now(); 
-        private LocalDate updatedAt = LocalDate.now(); 
+        private int isDelete = 0;
+        private LocalDate createdAt = LocalDate.now();
+        private LocalDate updatedAt = LocalDate.now();
 
         public UserBuilder userId(int userId) {
             this.userId = userId;
@@ -110,7 +111,7 @@ public class User {
             return new User(this);
         }
     }
-    
+
     public int getUserId() {
         return userId;
     }
@@ -206,5 +207,4 @@ public class User {
     public void setUpdatedAt(LocalDate updatedAt) {
         this.updatedAt = updatedAt;
     }
-    
 }
