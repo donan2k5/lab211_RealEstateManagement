@@ -1,93 +1,119 @@
 package repository.impl;
 
-import context.DBContext;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.time.LocalDateTime;
+import dal.TransactionDAO;
 import java.util.ArrayList;
 import java.util.List;
 import model.Transaction;
 import repository.TransactionRepository;
 
-public class TransactionRepositoryImpl extends DBContext<Transaction> implements TransactionRepository {
+public class TransactionRepositoryImpl implements TransactionRepository {
+    private final TransactionDAO transactionDAO;
+
+    public TransactionRepositoryImpl() {
+        this.transactionDAO = TransactionDAO.getInstance();
+    }
+
+    private static TransactionRepositoryImpl instance;
+
+    public static TransactionRepositoryImpl getInstance() {
+        if (instance == null) {
+            synchronized (TransactionRepositoryImpl.class) {
+                if (instance == null) {
+                    instance = new TransactionRepositoryImpl();
+                }
+            }
+        }
+        return instance;
+    }
 
     @Override
     public List<Transaction> getAllTransactions() {
-        throw new UnsupportedOperationException("Not implemented yet.");
+        return transactionDAO.getAllTransactions();
     }
 
-    /**
-     * Retrieves transactions by status.
-     * @param status The status to filter by (e.g., "completed")
-     * @return List of transactions matching the status
-     */
+   
     @Override
     public List<Transaction> getTransactionsByStatus(String status) {
-        List<Transaction> transactions = new ArrayList<>();
-        String sql = "SELECT transactionId, buyer_id, seller_id, price, status, created_at " +
-                     "FROM [transaction] WHERE status = ?";
-        try (PreparedStatement stm = connection.prepareStatement(sql)) {
-            stm.setString(1, status);
-            try (ResultSet rs = stm.executeQuery()) {
-                while (rs.next()) {
-                    transactions.add(createTransactionFromResultSet(rs));
-                }
-            }
-        } catch (SQLException ex) {
-            System.err.println("Error fetching transactions by status: " + ex.getMessage());
+        if (status == null || status.trim().isEmpty()) {
+            throw new IllegalArgumentException("Status cannot be null or empty");
         }
-        return transactions;
+        return transactionDAO.getTransactionsByStatus(status);
     }
 
-    /**
-     * Retrieves completed transactions for a specific month and year.
-     * @param month Month (1-12)
-     * @param year Year
-     * @return List of transactions matching the criteria
-     */
     @Override
     public List<Transaction> getTransactionsByMonth(int month, int year) {
-        List<Transaction> transactions = new ArrayList<>();
-        String sql = "SELECT transactionId, buyer_id, seller_id, price, status, created_at " +
-                     "FROM [transaction] WHERE MONTH(created_at) = ? AND YEAR(created_at) = ? AND status = 'completed'";
-        try (PreparedStatement stm = connection.prepareStatement(sql)) {
-            stm.setInt(1, month);
-            stm.setInt(2, year);
-            try (ResultSet rs = stm.executeQuery()) {
-                while (rs.next()) {
-                    transactions.add(createTransactionFromResultSet(rs));
-                }
-            }
-        } catch (SQLException ex) {
-            System.err.println("Error fetching transactions by month: " + ex.getMessage());
+        if (month < 1 || month > 12) {
+            throw new IllegalArgumentException("Month must be between 1 and 12");
         }
-        return transactions;
+        if (year < 0) {
+            throw new IllegalArgumentException("Year cannot be negative");
+        }
+        return transactionDAO.getTransactionsByMonth(month, year);
+    }
+    
+
+    @Override
+    public ArrayList<Transaction> list() {
+        return new ArrayList<>(transactionDAO.list());
     }
 
-    /**
-     * Helper method to create a Transaction object from a ResultSet.
-     */
-    private Transaction createTransactionFromResultSet(ResultSet rs) throws SQLException {
-        Transaction t = new Transaction();
-        t.setTransactionId(rs.getInt("transactionId"));
-        t.setBuyerId(rs.getInt("buyer_id"));
-        t.setSellerId(rs.getInt("seller_id"));
-        t.setPrice(rs.getDouble("price"));
-        t.setStatus(rs.getString("status"));
-        t.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
-        return t;
+    @Override
+    public Transaction get(int id) {
+        if (id <= 0) {
+            throw new IllegalArgumentException("ID must be greater than 0");
+        }
+        Transaction transaction = transactionDAO.get(id);
+        if (transaction == null) {
+            throw new IllegalStateException("Transaction with ID " + id + " not found");
+        }
+        return transaction;
     }
 
-    // Unsupported methods
+    public Transaction insert(Transaction entity) {
+        if (entity == null) {
+            throw new IllegalArgumentException("Transaction entity cannot be null");
+        }
+        Transaction inserted = transactionDAO.insert(entity);
+        if (inserted == null) {
+            throw new IllegalStateException("Failed to insert transaction");
+        }
+        return inserted;
+    }
+
+    public Transaction update(Transaction entity) {
+        if (entity == null) {
+            throw new IllegalArgumentException("Transaction entity cannot be null");
+        }
+        if (entity.getTransactionId() <= 0) {
+            throw new IllegalArgumentException("Transaction ID must be greater than 0");
+        }
+        Transaction updated = transactionDAO.update(entity);
+        if (updated == null) {
+            throw new IllegalStateException("Failed to update transaction with ID " + entity.getTransactionId());
+        }
+        return updated;
+    }
+
+
     @Override
-    public ArrayList<Transaction> list() { throw new UnsupportedOperationException("Not supported."); }
+    public Transaction delete(int id) {
+        if (id <= 0) {
+            throw new IllegalArgumentException("ID must be greater than 0");
+        }
+        Transaction deleted = transactionDAO.delete(id);
+        if (deleted == null) {
+            throw new IllegalStateException("Failed to delete transaction with ID " + id);
+        }
+        return deleted;
+    }
+
     @Override
-    public Transaction get(int id) { throw new UnsupportedOperationException("Not supported."); }
+    public Transaction insert(int entity) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
     @Override
-    public Transaction insert(Transaction entity) { throw new UnsupportedOperationException("Not supported."); }
-    @Override
-    public Transaction update(Transaction entity) { throw new UnsupportedOperationException("Not supported."); }
-    @Override
-    public Transaction delete(int id) { throw new UnsupportedOperationException("Not supported."); }
+    public Transaction update(int entity) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
 }
