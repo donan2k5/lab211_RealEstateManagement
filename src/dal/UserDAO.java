@@ -1,4 +1,4 @@
- package dal;
+package dal;
 
 import context.DBContext;
 import java.sql.Statement;
@@ -9,7 +9,25 @@ import java.util.ArrayList;
 
 import model.User;
 
+import java.util.List;
+
 public class UserDAO extends DBContext<User> {
+
+    private static UserDAO instance;
+
+    private UserDAO() {
+    }
+
+    public static UserDAO getInstance() {
+        if (instance == null) {
+            synchronized (UserDAO.class) {
+                if (instance == null) {
+                    instance = new UserDAO();
+                }
+            }
+        }
+        return instance;
+    }
 
     public User findByUsername(String username) {
         String sql = "SELECT * FROM [user] WHERE username = ? AND isdelete = 0";
@@ -61,12 +79,55 @@ public class UserDAO extends DBContext<User> {
     }
 
     @Override
-    public ArrayList<User> list() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public List<User> list() {
+        List<User> userList = new ArrayList<>();
+        String sql = "SELECT * FROM [user] WHERE isdelete = 0";
+        try (PreparedStatement stm = connection.prepareStatement(sql); ResultSet rs = stm.executeQuery()) {
+            while (rs.next()) {
+                User user = new User.UserBuilder()
+                        .userId(rs.getInt("userid"))
+                        .username(rs.getString("username"))
+                        .password(rs.getString("password"))
+                        .lastName(rs.getString("lastname"))
+                        .firstName(rs.getString("firstname"))
+                        .phone(rs.getString("phone"))
+                        .email(rs.getString("email"))
+                        .gender(rs.getString("gender"))
+                        .roleId(rs.getInt("roleid"))
+                        .delete(rs.getInt("isdelete"))
+                        .build();
+                userList.add(user);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return userList;
     }
 
     @Override
     public User get(int id) {
+        String sql = "SELECT * FROM [user] WHERE userid = ? AND isdelete = 0";
+        try (PreparedStatement stm = connection.prepareStatement(sql)) {
+            stm.setInt(1, id);
+            try (ResultSet rs = stm.executeQuery()) {
+                if (rs.next()) {
+                    return new User.UserBuilder()
+                            .userId(rs.getInt("userid"))
+                            .username(rs.getString("username"))
+                            .password(rs.getString("password"))
+                            .lastName(rs.getString("lastname"))
+                            .firstName(rs.getString("firstname"))
+                            .phone(rs.getString("phone"))
+                            .email(rs.getString("email"))
+                            .gender(rs.getString("gender"))
+                            .roleId(rs.getInt("roleid"))
+                            .delete(rs.getInt("isdelete"))
+                            .build();
+                }
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
         return null;
     }
 
@@ -105,28 +166,22 @@ public class UserDAO extends DBContext<User> {
     @Override
     public User update(User entity) {
         String sql = "UPDATE [user] "
-                + "SET username = ?, "
-                + "    password = ?, "
-                + "    lastname = ?, "
+                + "SET lastname = ?, "
                 + "    firstname = ?, "
                 + "    phone = ?, "
                 + "    email = ?, "
                 + "    gender = ?, "
                 + "    roleid = ?, "
-                + "    isdelete = ?, "
                 + "    updated_at = GETDATE() "
                 + "WHERE userid = ?";
         try (PreparedStatement stm = connection.prepareStatement(sql)) {
-            stm.setString(1, entity.getUsername());
-            stm.setString(2, entity.getPassword());
-            stm.setString(3, entity.getLastName());
-            stm.setString(4, entity.getFirstName());
-            stm.setString(5, entity.getPhone());
-            stm.setString(6, entity.getEmail());
-            stm.setString(7, entity.getGender());
-            stm.setInt(8, entity.getRoleId());
-            stm.setInt(9, entity.getIsDelete());
-            stm.setInt(10, entity.getUserId());
+            stm.setString(1, entity.getLastName());
+            stm.setString(2, entity.getFirstName());
+            stm.setString(3, entity.getPhone());
+            stm.setString(4, entity.getEmail());
+            stm.setString(5, entity.getGender());
+            stm.setInt(6, entity.getRoleId());
+            stm.setInt(7, entity.getUserId());
 
             int affectedRows = stm.executeUpdate();
             return affectedRows > 0 ? entity : null;
@@ -138,7 +193,14 @@ public class UserDAO extends DBContext<User> {
 
     @Override
     public User delete(int id) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        String sql = "UPDATE [user] SET isdelete = 1 WHERE userid = ?";
+        try (PreparedStatement stm = connection.prepareStatement(sql)) {
+            stm.setInt(1, id);
+            stm.executeUpdate();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return null;
     }
 
     public boolean existsById(int id) {

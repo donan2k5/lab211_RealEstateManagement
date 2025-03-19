@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package service;
+package service.impl;
 
 import dal.RealEstateDAO;
 import java.util.ArrayList;
@@ -13,7 +13,8 @@ import model.House;
 import model.Land;
 import model.RealEstate;
 import model.Villa;
-import repository.RealEstateRepository;
+import repository.impl.RealEstateRepository;
+import service.IRealEstateService;
 import view.RealEstateView;
 
 /**

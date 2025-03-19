@@ -2,8 +2,8 @@ package service;
 
 import model.User;
 
-
 public interface AuthenticationService {
+
     public User login(User user);
 
     public User logout();
@@ -11,4 +11,7 @@ public interface AuthenticationService {
     public User getLoggedInUser();
 
     public void register(User user);
+
+    public boolean isLoggedIn();
+
 }

@@ -3,10 +3,27 @@ package repository.impl;
 import dal.UserDAO;
 import model.User;
 import repository.UserRepository;
+import java.util.List;
 
 public class UserRepositoryImpl implements UserRepository {
 
-    private final UserDAO userDAO = new UserDAO();
+    private User loggedInUser;
+    private static UserRepositoryImpl instance;
+
+    public UserRepositoryImpl() {
+    }
+
+    public static UserRepositoryImpl getInstance() {
+        if (instance == null) {
+            synchronized (UserDAO.class) {
+                if (instance == null) {
+                    instance = new UserRepositoryImpl();
+                }
+            }
+        }
+        return instance;
+    }
+    private final UserDAO userDAO = UserDAO.getInstance();
 
     @Override
     public User findByUsername(String username) {
@@ -46,4 +63,34 @@ public class UserRepositoryImpl implements UserRepository {
         return userDAO.existsByEmail(email);
     }
 
+    // Tìm user theo ID (chỉ trả về khi user chưa bị xóa mềm: isdelete = 0)
+    public User findById(int id) {
+        return userDAO.get(id);
+    }
+
+    // Liệt kê tất cả các user chưa bị xóa mềm (isdelete = 0)
+    public List<User> listAllUsers() {
+        return userDAO.list();
+    }
+
+    // Xóa user theo kiểu "xóa mềm": cập nhật isdelete = 1 cho user có id cho trước
+    @Override
+    public void deleteUser(int id) {
+        userDAO.delete(id);
+    }
+
+    @Override
+    public User loadLoggedInUser() {
+        return loggedInUser; // 
+    }
+
+    @Override
+    public void saveLoggedInUser(User user) {
+        this.loggedInUser = user;
+    }
+
+    @Override
+    public void userLogout() {
+        this.loggedInUser = null;
+    }
 }
