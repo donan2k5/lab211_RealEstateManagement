@@ -1,23 +1,33 @@
 package controller;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import model.RealEstate;
+import model.Transaction;
 import model.User;
 import repository.impl.RealEstateRepository;
+import repository.impl.TransactionRepository;
 import service.AuthenticationService;
 import service.impl.RealEstateService;
 import service.impl.AuthenticationServiceImpl;
+import service.impl.TransactionService;
+import utils.TransactionValidation;
 import service.impl.UserServiceImpl;
 import utils.Utils;
 import view.AuthenticationView;
 import view.Menu;
 import view.RealEstateView;
+import view.TransactionView;
 import view.UserManagementView;
 import view.Validation;
 
 public class RealEstateController extends Menu {
-
+    private final TransactionValidation tval = new TransactionValidation();
+    private final TransactionRepository transRepo = new TransactionRepository();
+    private final TransactionService transService = new TransactionService();
+    private final TransactionView tvi = new TransactionView();
     private final AuthenticationView authView = new AuthenticationView();
     private final AuthenticationService authService = new AuthenticationServiceImpl();
     private final RealEstateService reSer = new RealEstateService();
@@ -228,7 +238,7 @@ public class RealEstateController extends Menu {
                     case 5 ->
                         managementSearchREByCriteria();
                     case 6 ->
-                        System.out.println("Gọi hàm phê duyệt giao dịch"); //Khôi
+                        transService.checkStatusTransaction();
                     case 7 -> {
                         this.stop();
                     }
@@ -263,11 +273,13 @@ public class RealEstateController extends Menu {
                     case 4 ->
                         System.out.println("Xoa bds ma user so huu");
                     case 5 ->
-                        System.out.println("User them moi bds");
-                    case 6 ->
-                        System.out.println("Gọi hàm mua bđs"); //Khôi 
+                        managementAddNewRE(); //Đăng cần sửa hàm này để khi add sẽ có tên chủ sở hữu chính là id của ông user này
+                    case 6 ->{
+                        Transaction newTrans = tvi.createTransactionBuyRE(authService.getLoggedInUser().getUserId());
+                        if (newTrans != null) transService.add(newTrans);
+                    }
                     case 7 ->
-                        System.out.println("Gọi hàm liệt kê danh sách bđs mua, bán của user này"); //Khôi
+                        tvi.displayListTransaction(transService.getAllTransactionByUserID(authService.getLoggedInUser().getUserId())); //viewTransactionHistory; //System.out.println("Gọi hàm liệt kê danh sách bđs mua, bán của user này"); //Khôi
                     case 8 -> {
                         this.stop();
                     }
@@ -385,7 +397,7 @@ public class RealEstateController extends Menu {
         List<RealEstate> reList = reSer.searchByCriteria(criteria, typeRE);
         reView.displaySearchResults(reList);
     }
-
+    
     public static void main(String[] args) {
         RealEstateController realEstateController = new RealEstateController();
         realEstateController.run();
