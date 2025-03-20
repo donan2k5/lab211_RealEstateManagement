@@ -12,7 +12,7 @@ import java.time.LocalDate;
  */
 public class Transaction {
     private int transID;
-    private String REID;
+    private int REID;
     private int sellerID;
     private int buyerID;
     private double price;
@@ -22,7 +22,7 @@ public class Transaction {
     private LocalDate createTime;
     private LocalDate updateTime;
 
-    public Transaction(int transID, String REID, int sellerID, int buyerID, double price, double deposit, LocalDate expirationTime, String status, LocalDate createTime, LocalDate updateTime) {
+    public Transaction(int transID, int REID, int sellerID, int buyerID, double price, double deposit, LocalDate expirationTime, String status, LocalDate createTime, LocalDate updateTime) {
         this.transID = transID;
         this.REID = REID;
         this.sellerID = sellerID;
@@ -46,11 +46,11 @@ public class Transaction {
         this.transID = transID;
     }
 
-    public String getREID() {
+    public int getREID() {
         return REID;
     }
 
-    public void setREID(String REID) {
+    public void setREID(int REID) {
         this.REID = REID;
     }
 

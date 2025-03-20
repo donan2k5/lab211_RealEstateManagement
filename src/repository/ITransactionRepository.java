@@ -11,11 +11,11 @@ import model.Transaction;
  *
  * @author ADMIN
  */
-public interface ITransactionRepository extends Repository<Transaction>{
+public interface ITransactionRepository{
         Transaction findTransactionById(int id);
-        List<Transaction> findTransactionsByREID(String id);
+        List<Transaction> findTransactionsByREID(int id);
         List<Transaction> findTransactionBySellerID(int id);
         List<Transaction> findTransactionByBuyerID(int id);
         void deleteTransaction(Transaction t);
-
+        void save(Transaction t);
 }
