@@ -1,15 +1,8 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package model;
 
 import java.time.LocalDate;
 
-/**
- *
- * @author ADMIN
- */
+
 public class Transaction {
     private int transID;
     private int REID;
@@ -122,6 +115,5 @@ public class Transaction {
     public String toString() {
         return transID + "," + REID + "," + sellerID + "," + buyerID + "," + price + "," + deposit + "," + expirationTime + "," + status + "," + createTime + "," + updateTime;
     }
-    
     
 }

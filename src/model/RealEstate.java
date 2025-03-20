@@ -9,23 +9,91 @@ package model;
  * @author DELL
  */
 public class RealEstate {
+
     private String ID;
     private String name;
-    private String owner;
+    private int ownerId;
     private double price;
-    private String address;
+    private String street;
+    private String ward;
+    private String district;
+    private String city;
     private double area;
 
     public RealEstate() {
     }
 
-    public RealEstate(String ID, String Name, String owner, double price, String address, double area) {
+    public RealEstate(String ID, String name, int ownerId, double price, String street, String ward, String district, String city, double area) {
         this.ID = ID;
-        this.name = Name;
-        this.owner = owner;
+        this.name = name;
+        this.ownerId = ownerId;
         this.price = price;
-        this.address = address;
+        this.street = street;
+        this.ward = ward;
+        this.district = district;
+        this.city = city;
         this.area = area;
+    }
+
+    public RealEstate(String name, int ownerId, double price, String street, String ward, String district, String city, double area) {
+        this.name = name;
+        this.ownerId = ownerId;
+        this.price = price;
+        this.street = street;
+        this.ward = ward;
+        this.district = district;
+        this.city = city;
+        this.area = area;
+    }
+
+    public RealEstate(String name, double price, String street, String ward, String district, String city, double area) {
+        this.name = name;
+        this.price = price;
+        this.street = street;
+        this.ward = ward;
+        this.district = district;
+        this.city = city;
+        this.area = area;
+    }
+
+    public int getOwner() {
+        return ownerId;
+    }
+
+    public void setOwnerId(int ownerId) {
+        this.ownerId = ownerId;
+    }
+
+    public String getStreet() {
+        return street;
+    }
+
+    public void setStreet(String street) {
+        this.street = street;
+    }
+
+    public String getWard() {
+        return ward;
+    }
+
+    public void setWard(String ward) {
+        this.ward = ward;
+    }
+
+    public String getDistrict() {
+        return district;
+    }
+
+    public void setDistrict(String district) {
+        this.district = district;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
     }
 
     public String getID() {
@@ -44,30 +112,12 @@ public class RealEstate {
         this.name = Name;
     }
 
-   
-
-    public String getOwner() {
-        return owner;
-    }
-
-    public void setOwner(String owner) {
-        this.owner = owner;
-    }
-
     public double getPrice() {
         return price;
     }
 
     public void setPrice(double price) {
         this.price = price;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
     }
 
     public double getArea() {
@@ -77,8 +127,9 @@ public class RealEstate {
     public void setArea(double area) {
         this.area = area;
     }
+
     @Override
     public String toString() {
-        return ID + ", " + name + ", " + owner + ", " + address + ", " + price + ", " + area;
+        return ID + ", " + name + ", " + ownerId + ", " + street + ", " + ward + ", " + district + ", " + city + ", " + price + ", " + area;
     }
 }

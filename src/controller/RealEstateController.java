@@ -14,11 +14,13 @@ import service.impl.RealEstateService;
 import service.impl.AuthenticationServiceImpl;
 import service.impl.TransactionService;
 import utils.TransactionValidation;
+import service.impl.UserServiceImpl;
 import utils.Utils;
 import view.AuthenticationView;
 import view.Menu;
 import view.RealEstateView;
 import view.TransactionView;
+import view.UserManagementView;
 import view.Validation;
 
 public class RealEstateController extends Menu {
@@ -31,8 +33,10 @@ public class RealEstateController extends Menu {
     private final RealEstateService reSer = new RealEstateService();
     private final RealEstateView reView = new RealEstateView();
     private final RealEstateRepository reRepo = new RealEstateRepository();
+    private final UserServiceImpl userservice = new UserServiceImpl();
     private Validation v = new Validation();
-    
+    private final UserManagementView umView = new UserManagementView();
+
     public RealEstateController() {
         super("=== Register or Login to continue ===", new String[]{
             "Register",
@@ -80,7 +84,7 @@ public class RealEstateController extends Menu {
         authView.displayLogout(user.getUsername());
         this.run();
     }
-    
+
     //Menu tổng sau khi login thành công
     private void menuManagement() {
         User user = authService.getLoggedInUser();
@@ -138,7 +142,7 @@ public class RealEstateController extends Menu {
         };
         menu.run();
     }
-    
+
     //Menu của user
     private void showMenuCustomer() {
         String[] options = {
@@ -151,7 +155,7 @@ public class RealEstateController extends Menu {
             public void execute(int ch) {
                 switch (ch) {
                     case 1 ->
-                        System.out.println("Gọi hàm update thay vì gọi nguyên 1 menu như admin");
+                        editInformation();
                     case 2 ->
                         realEstateCustomerManagement();
                     case 3 -> {
@@ -176,11 +180,11 @@ public class RealEstateController extends Menu {
             public void execute(int ch) {
                 switch (ch) {
                     case 1 ->
-                        System.out.println("Hiển thị danh sách tất cả user");
+                        listAllUsers();
                     case 2 ->
-                        System.out.println("Xóa user (set isdeleted = 1");
+                        deleteUser();
                     case 3 ->
-                        System.out.println("Gọi hàm edit thông tin cá nhân của admin");
+                        editInformation();
                     case 4 -> {
                         this.stop();
                     }
@@ -190,11 +194,32 @@ public class RealEstateController extends Menu {
         menu.run();
     }
 
+    private void listAllUsers() {
+        List<User> users = userservice.getAllUsers();
+        umView.displayUserList(users);
+    }
+
+    // Task 2: Xóa user theo kiểu xóa mềm (set isDelete = 1)
+    private void deleteUser() {
+        int id = umView.promptForUserId();
+
+        userservice.deleteUser(id);
+
+    }
+
+    // Task 3: Chỉnh sửa thông tin cá nhân của user đang đăng nhập
+    private void editInformation() {
+        userservice.editInformation();
+    }
+
     // Hàm của ADMIN dùng để quản lý bất động sản (Đăng + Khôi)
     private void realEstateAdminManagement() {
         String[] options = {
-            "List all Real Estate",
-            "Search Real Estate",
+            "Display list real estate",
+            "Add new real estate",
+            "Delete",
+            "Edit",
+            "Find RE by criteria",
             "Transaction Management", //Khôi
             "Return to main menu"
         };
@@ -203,12 +228,18 @@ public class RealEstateController extends Menu {
             public void execute(int ch) {
                 switch (ch) {
                     case 1 ->
-                        managementDisplayListRE();
+                        managementDisplayListREAdmin();
                     case 2 ->
-                        managementSearchREByCriteria();
+                        managementAddNewREAdmin();
                     case 3 ->
-                        transService.checkStatusTransaction();//System.out.println("Gọi hàm phê duyệt giao dịch"); //Khôi
-                    case 4 -> {
+                        managementDeleteREAdmin();
+                    case 4 ->
+                        managementEditREAdmin();
+                    case 5 ->
+                        managementSearchREByCriteria();
+                    case 6 ->
+                        transService.checkStatusTransaction();
+                    case 7 -> {
                         this.stop();
                     }
                 }
@@ -216,30 +247,31 @@ public class RealEstateController extends Menu {
         };
         menu.run();
     }
+
     // Hàm của Customer dùng để quản lý bất động sản (Đăng + Khôi)
     private void realEstateCustomerManagement() {
         String[] options = {
-            "List all Real Estate",
-            "Search Real Estate",
-            "Edit Real Estate of this customer sell",
-            "Delete Real Estate of this customer sell",
-            "Sell Real Estate", //Khôi
+            "List all Real Estate", //Dang
+            "Search Real Estate", //Dang
+            "Edit Real Estate of this customer sell", //Dang
+            "Delete Real Estate of this customer sell",//Dang
+            "Add Real Estate", //Dang
             "Buy Real Estate", //Khôi 
             "View contract", //Khôi (Xem lại tất cả các hợp đồng về căn nhà mà mình đã bán và mua
             "Return to main menu"
         };
-        Menu menu = new Menu("Admin Menu", options) {
+        Menu menu = new Menu("Customer Menu", options) {
             @Override
             public void execute(int ch) {
                 switch (ch) {
                     case 1 ->
-                        managementDisplayListRE();
+                        System.out.println("Hien thi tat ca bds");
                     case 2 ->
                         managementSearchREByCriteria();
                     case 3 ->
-                        managementEditRE();
+                        System.out.println("Viet ham edit bds ma user so huu");
                     case 4 ->
-                        managementDeleteRE();
+                        System.out.println("Xoa bds ma user so huu");
                     case 5 ->
                         managementAddNewRE(); //Đăng cần sửa hàm này để khi add sẽ có tên chủ sở hữu chính là id của ông user này
                     case 6 ->{
@@ -256,8 +288,8 @@ public class RealEstateController extends Menu {
         };
         menu.run();
     }
-    
-    private void managementDisplayListRE() {
+
+    private void managementDisplayListREAdmin() {
         String[] options = {
             "Display list house",
             "Display list villa",
@@ -288,7 +320,7 @@ public class RealEstateController extends Menu {
         displayingREMenu.run();
     }
 
-    public void managementAddNewRE() {
+    public void managementAddNewREAdmin() {
         String[] options = {
             "Add new house",
             "Add new villa",
@@ -301,19 +333,19 @@ public class RealEstateController extends Menu {
             public void execute(int ch) {
                 switch (ch) {
                     case 1 -> {
-                        reSer.add(reView.getInformationHouse());
+                        reSer.add(reView.getInformationHouse("admin"));
                         reView.addSuccessRE("HOUSE");
                     }
                     case 2 -> {
-                        reSer.add(reView.getInformationVilla());
+                        reSer.add(reView.getInformationVilla("admin"));
                         reView.addSuccessRE("VILLA");
                     }
                     case 3 -> {
-                        reSer.add(reView.getInformationLand());
+                        reSer.add(reView.getInformationLand("admin"));
                         reView.addSuccessRE("LAND");
                     }
                     case 4 -> {
-                        reSer.add(reView.getInformationApartment());
+                        reSer.add(reView.getInformationApartment("admin"));
                         reView.addSuccessRE("APARTMENT");
                     }
                     case 5 -> {
@@ -327,41 +359,40 @@ public class RealEstateController extends Menu {
         displayingREMenu.run();
     }
 
-    public void managementDeleteRE() {
+    public void managementDeleteREAdmin() {
         reView.displayListHouse(reSer.getListHouse());
         reView.displayListVilla(reSer.getListVilla());
         reView.displayListLand(reSer.getListLand());
         reView.displayListApartment(reSer.getListApartment());
-        String id = "";
+        int id = 0;
         while (true) {
-            id = v.getStringRegex("Enter id of RE you want to delete: ", "^.*$", "Invalid input, enter again: ");
-            if (!reSer.isExistREInSystem(id)) {
-                System.out.println("Invalid input, pls try again.");
-                continue;
+            id = v.getValidInteger("Enter id of RE you want to delete: ");
+            if (!reSer.isExistREInSystem(String.valueOf(id))) {
+                System.out.println("This id not existed in system.");
             }
             break;
         }
         reRepo.readData();
-        RealEstate selectedRE = reRepo.findEstateById(id);
-        System.out.println("You have just delete " + reView.displayBasicInformation(selectedRE) + " from sytem.");
-        reSer.delete(id);
+        RealEstate selectedRE = reRepo.findEstateById(String.valueOf(id));
+        reSer.delete(String.valueOf(id));
+        reView.displayNotification(selectedRE, "delete ");
     }
 
-    public void managementEditRE() {
-        String id = "";
+    public void managementEditREAdmin() {
+        int id = 0;
         while (true) {
-            id = v.getStringRegex("Enter id of RE you want to edit: ", "^.*$", "Invalid input, enter again: ");
-            if (!reSer.isExistREInSystem(id)) {
-                System.out.println("Invalid input, pls try again.");
+            id = v.getValidInteger("Enter id of RE you want to edit: ");
+            if (!reSer.isExistREInSystem(String.valueOf(id))) {
+                System.out.println("This id not existed in system.");
                 continue;
             }
             break;
         }
-        reSer.update(id);
+        reSer.update(String.valueOf(id));
     }
 
     public void managementSearchREByCriteria() {
-        String typeRE = reView.getUserChooseREType();
+        String typeRE = reView.getUserChooseREType("search");
         Map<String, Object> criteria = reView.getUserSearchByCriteria(typeRE);
         List<RealEstate> reList = reSer.searchByCriteria(criteria, typeRE);
         reView.displaySearchResults(reList);
@@ -371,5 +402,4 @@ public class RealEstateController extends Menu {
         RealEstateController realEstateController = new RealEstateController();
         realEstateController.run();
     }
-
 }

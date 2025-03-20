@@ -24,5 +24,6 @@ public interface IRealEstateService extends Service<RealEstate> {
     List<Villa> getListVilla();
 
     List<Apartment> getListApartment();
+
     List<RealEstate> getListRealEstate();
 }
