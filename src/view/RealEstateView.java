@@ -452,10 +452,10 @@ public class RealEstateView implements IRealEstateView {
             return;
         }
         System.out.println("Results:");
-        System.out.printf("%-20s%-15s%-15s\n",
+        System.out.printf("%-60s%-20s%-20s\n",
                 "Name", "Price", "Owner");
         for (RealEstate result : results) {
-            System.out.printf("%-20s%-15s%-15s\n",
+            System.out.printf("%-60s%-20s%-20s\n",
                     result.getName(), result.getPrice(), result.getOwner());
         }
     }

@@ -435,6 +435,7 @@ public class RealEstateController extends Menu {
             id = v.getValidInteger("Enter id of RE you want to delete: ");
             if (!reSer.isExistREInSystem(String.valueOf(id))) {
                 System.out.println("This id not existed in system.");
+                continue;
             }
             break;
         }
