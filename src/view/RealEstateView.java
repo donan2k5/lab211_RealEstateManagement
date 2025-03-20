@@ -484,9 +484,9 @@ public class RealEstateView implements IRealEstateView {
 
     public void displayNotification(RealEstate r, String action) {
         if (r == null) {
-            System.out.println("You " + action + " failed.");
+            System.out.println("You " + action + " " + r.getName() + "(" + r.getID() + ")" + " failed.");
         } else {
-            System.out.println("You " + action + " success.");
+            System.out.println("You " + action + " " + r.getName() + "(" + r.getID() + ")" + " success.");
         }
     }
 

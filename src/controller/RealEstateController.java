@@ -442,7 +442,7 @@ public class RealEstateController extends Menu {
         reRepo.readData();
         RealEstate selectedRE = reSer.getSpecificRE(String.valueOf(id));
         reSer.delete(String.valueOf(id));
-        reView.displayNotification(selectedRE, "delete ");
+        reView.displayNotification(selectedRE, "delete");
     }
 
     public void managementEditREAdmin() {
