@@ -255,15 +255,15 @@ public class RealEstateController extends Menu {
             public void execute(int ch) {
                 switch (ch) {
                     case 1 ->
-                        System.out.println("Hien thi tat ca bds");
+                        displayListREUser();
                     case 2 ->
                         managementSearchREByCriteria();
                     case 3 ->
-                        System.out.println("Viet ham edit bds ma user so huu");
+                        editListREUser();
                     case 4 ->
-                        System.out.println("Xoa bds ma user so huu");
+                        deleteREUser();
                     case 5 ->
-                        System.out.println("User them moi bds");
+                        addNewREUser();
                     case 6 ->
                         System.out.println("Gọi hàm mua bđs"); //Khôi 
                     case 7 ->
@@ -275,6 +275,84 @@ public class RealEstateController extends Menu {
             }
         };
         menu.run();
+    }
+
+    public void displayListREUser() {
+        User loggedUser = authService.getLoggedInUser();
+        reView.displayListREUser(reSer.getListRealEstateUser(loggedUser.getUserId()), loggedUser);
+    }
+
+    public void editListREUser() {
+        displayListREUser();
+        int id = 0;
+        User loggedUser = authService.getLoggedInUser();
+        while (true) {
+            id = v.getValidInteger("Enter id of RE you want to edit: ");
+            if (!reSer.isREOwnedByUser(loggedUser.getUserId(), id)) {
+                System.out.println("This id not belong to " + loggedUser.getFirstName() + " " + loggedUser.getLastName());
+                continue;
+            }
+            break;
+        }
+        reSer.updateREUser(id, loggedUser.getUserId());
+    }
+
+    public void deleteREUser() {
+        displayListREUser();
+        int id = 0;
+        User loggedUser = authService.getLoggedInUser();
+        while (true) {
+            id = v.getValidInteger("Enter id of RE you want to edit: ");
+            if (!reSer.isREOwnedByUser(loggedUser.getUserId(), id)) {
+                System.out.println("This id not belong to " + loggedUser.getFirstName() + " " + loggedUser.getLastName());
+                continue;
+            }
+            break;
+        }
+        RealEstate reSelected = reSer.getSpecificRE(String.valueOf(id));
+        reSer.deleteREUser(id, loggedUser.getUserId());
+        reView.displayNotification(reSelected, "delete");
+    }
+
+    public void addNewREUser() {
+        User loggedUser = authService.getLoggedInUser();
+        int userid = loggedUser.getUserId();
+        String[] options = {
+            "Add new house",
+            "Add new villa",
+            "Add new land",
+            "Add new apartment",
+            "Return to main menu"
+        };
+        Menu displayingREMenu = new Menu("Add New RE", options) {
+            @Override
+            public void execute(int ch) {
+                switch (ch) {
+                    case 1 -> {
+                        reSer.addNewREUser(reView.getInformationHouse("user"), userid);
+                        reView.addSuccessRE("HOUSE");
+                    }
+                    case 2 -> {
+                        reSer.addNewREUser(reView.getInformationVilla("admin"), userid);
+                        reView.addSuccessRE("VILLA");
+                    }
+                    case 3 -> {
+                        reSer.addNewREUser(reView.getInformationLand("admin"), userid);
+                        reView.addSuccessRE("LAND");
+                    }
+                    case 4 -> {
+                        reSer.addNewREUser(reView.getInformationApartment("admin"), userid);
+                        reView.addSuccessRE("APARTMENT");
+                    }
+                    case 5 -> {
+                        this.stop();
+                    }
+                    default ->
+                        System.out.println("Invalid choice. Please try again.");
+                }
+            }
+        };
+        displayingREMenu.run();
     }
 
     private void managementDisplayListREAdmin() {
@@ -361,7 +439,7 @@ public class RealEstateController extends Menu {
             break;
         }
         reRepo.readData();
-        RealEstate selectedRE = reRepo.findEstateById(String.valueOf(id));
+        RealEstate selectedRE = reSer.getSpecificRE(String.valueOf(id));
         reSer.delete(String.valueOf(id));
         reView.displayNotification(selectedRE, "delete ");
     }
