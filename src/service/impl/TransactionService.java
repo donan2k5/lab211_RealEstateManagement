@@ -72,6 +72,8 @@ public class TransactionService implements ITransactionService {
         //get and display all pending transaction
         List<Transaction> tlist = getPendingTransactionList("Pending");
         transView.displayListTransaction(tlist);
+        
+        //change status confirm
         boolean confirm = tval.continueConfirm("Do you want to change transaction status (Y/N)? ");
 
         if (confirm) {
@@ -90,11 +92,11 @@ public class TransactionService implements ITransactionService {
                         tlist.remove(changingTrans);
                         transRepo.save(changingTrans);
                     }
-                    //neu status la accepted, cac transactions mua chung property se bi danh denied
-                    if (status.equalsIgnoreCase("Accepted")) {
+                    //neu status la completed, cac transactions mua chung property se bi danh cancelled
+                    if (status.equalsIgnoreCase("Completed")) {
                         for (Transaction t : getPendingTransactionList("Pending")) {
                             if (t.getREID() == changingTrans.getREID()) {
-                                t.setStatus("Denied");
+                                t.setStatus("Cancelled");
                             }
                             transRepo.save(t);
                         }
