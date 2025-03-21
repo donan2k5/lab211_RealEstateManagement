@@ -1,12 +1,15 @@
 package service.impl;
 
 import java.util.ArrayList;
+import utils.TransactionValidation;
 import java.util.List;
+import java.util.stream.Collectors;
 import model.Transaction;
+import model.User;
 import repository.impl.TransactionRepository;
 import service.ITransactionService;
-import utils.TransactionValidation;
 import view.TransactionView;
+import repository.impl.UserRepositoryImpl;
 
 public class TransactionService implements ITransactionService {
 
@@ -14,7 +17,8 @@ public class TransactionService implements ITransactionService {
     private TransactionView transView = new TransactionView();
     private TransactionValidation tval = new TransactionValidation();
     private RealEstateService realEstateService = new RealEstateService();
-
+    private final UserRepositoryImpl userRepo = new UserRepositoryImpl();
+    
     public boolean isExistTransactionInSystem(int id) {
         return transRepo.findTransactionById(id) != null;
     }
@@ -76,9 +80,7 @@ public class TransactionService implements ITransactionService {
                 int transID = tval.getInt("Enter id of transaction you want to change status: ");
                 if (!isExistTransactionInList(transID, tlist)) {
                     System.out.println("Transaction " + transID + " is not found!");
-                } 
-                
-                else {
+                } else {
                     //neu ton tai, input new status
                     String status = tval.getAndValidStatus("Please input new status: ");
                     //neu status moi ko phai pending, set status va remove khoi danh sach pending
@@ -105,5 +107,34 @@ public class TransactionService implements ITransactionService {
                 }
             }
         }
+    }
+
+    @Override
+    public double getTotalRevenue() {
+        List<Transaction> completedTransactions = transRepo.getTransactionsByStatus("completed");
+        return completedTransactions.isEmpty() ? 0.0 : completedTransactions.stream()
+                .mapToDouble(Transaction::getPrice)
+                .sum();
+    }
+
+    @Override
+    public int getTotalHousesSold() {
+        List<Transaction> completedTransactions = transRepo.getTransactionsByStatus("completed");
+        return completedTransactions.size();
+    }
+
+    @Override
+    public int getHousesSoldByMonth(int month, int year) {
+        List<Transaction> transactions = transRepo.getTransactionsByMonth(month, year);
+        return transactions.size();
+    }
+
+    @Override
+    public List<User> getBuyersByMonth(int month, int year) {
+        List<Transaction> transactions = transRepo.getTransactionsByMonth(month, year);
+        return transactions.stream()
+                .map(t -> userRepo.findById(t.getBuyerID()))
+                .filter(u -> u != null)
+                .collect(Collectors.toList());
     }
 }

@@ -3,6 +3,7 @@ package model;
 import java.time.LocalDate;
 
 public class Transaction {
+
     private int transID;
     private int REID;
     private int sellerID;
@@ -36,7 +37,7 @@ public class Transaction {
         this.isDeleted = isDeleted;
         this.createTime = createTime;
         this.updateTime = updateTime;
-    }    
+    }
 
     public Transaction() {
     }
@@ -128,10 +129,10 @@ public class Transaction {
     public void setIsDeleted(boolean isDeleted) {
         this.isDeleted = isDeleted;
     }
-    
+
     @Override
     public String toString() {
         return transID + "," + REID + "," + sellerID + "," + buyerID + "," + price + "," + deposit + "," + expirationTime + "," + status + "," + createTime + "," + updateTime;
     }
-    
+
 }

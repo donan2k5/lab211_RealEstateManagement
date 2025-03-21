@@ -1,17 +1,110 @@
 package dal;
 
 import context.DBContext;
-import java.util.ArrayList;
 import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.sql.ResultSet;
-import java.sql.Date;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Timestamp;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.sql.Date;
 import java.util.List;
-
 import model.Transaction;
 
 public class TransactionDAO extends DBContext<Transaction> {
+
+    private static TransactionDAO instance;
+
+    private TransactionDAO() {
+    }
+
+    public static TransactionDAO getInstance() {
+        if (instance == null) {
+            synchronized (TransactionDAO.class) {
+                if (instance == null) {
+                    instance = new TransactionDAO();
+                }
+            }
+        }
+        return instance;
+    }
+
+    public List<Transaction> getAllTransactions() {
+        List<Transaction> transactions = new ArrayList<>();
+        String sql = "SELECT transactionId, buyer_id, seller_id, price, status, created_at FROM [transaction]";
+        try (PreparedStatement stm = connection.prepareStatement(sql); ResultSet rs = stm.executeQuery()) {
+            while (rs.next()) {
+                transactions.add(createTransactionFromResultSet(rs));
+            }
+        } catch (SQLException ex) {
+            System.err.println("Error fetching all transactions: " + ex.getMessage());
+        }
+        return transactions;
+    }
+
+    /**
+     * Retrieves transactions by status.
+     *
+     * @param status The status to filter by (e.g., "completed")
+     * @return List of transactions matching the status
+     */
+    public List<Transaction> getTransactionsByStatus(String status) {
+        List<Transaction> transactions = new ArrayList<>();
+        String sql = "SELECT transactionId, buyer_id, seller_id, price, status, created_at "
+                + "FROM [transaction] WHERE status = ?";
+        try (PreparedStatement stm = connection.prepareStatement(sql)) {
+            stm.setString(1, status);
+            try (ResultSet rs = stm.executeQuery()) {
+                while (rs.next()) {
+                    transactions.add(createTransactionFromResultSet(rs));
+                }
+            }
+        } catch (SQLException ex) {
+            System.err.println("Error fetching transactions by status: " + ex.getMessage());
+        }
+        return transactions;
+    }
+
+    /**
+     * Retrieves completed transactions for a specific month and year.
+     *
+     * @param month Month (1-12)
+     * @param year Year
+     * @return List of transactions matching the criteria
+     */
+    public List<Transaction> getTransactionsByMonth(int month, int year) {
+        List<Transaction> transactions = new ArrayList<>();
+        String sql = "SELECT transactionId, buyer_id, seller_id, price, status, created_at "
+                + "FROM [transaction] WHERE MONTH(created_at) = ? AND YEAR(created_at) = ? AND status = 'completed'";
+        try (PreparedStatement stm = connection.prepareStatement(sql)) {
+            stm.setInt(1, month);
+            stm.setInt(2, year);
+            try (ResultSet rs = stm.executeQuery()) {
+                while (rs.next()) {
+                    transactions.add(createTransactionFromResultSet(rs));
+                }
+            }
+        } catch (SQLException ex) {
+            System.err.println("Error fetching transactions by month: " + ex.getMessage());
+        }
+        return transactions;
+    }
+
+    /**
+     * Helper method to create a Transaction object from a ResultSet.
+     */
+    private Transaction createTransactionFromResultSet(ResultSet rs) throws SQLException {
+        Transaction t = new Transaction();
+        t.setTransID(rs.getInt("transactionId"));
+        t.setBuyerID(rs.getInt("buyer_id"));
+        t.setSellerID(rs.getInt("seller_id"));
+        t.setPrice(rs.getDouble("price"));
+        t.setStatus(rs.getString("status"));
+        t.setCreateTime(rs.getTimestamp("created_at").toLocalDateTime().toLocalDate());
+        return t;
+    }
 
     public List<Transaction> findTransactionsByREID(int id) {
         List<Transaction> transactions = new ArrayList<>();
