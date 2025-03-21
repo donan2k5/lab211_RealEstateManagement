@@ -37,6 +37,14 @@ public class RealEstateRepository implements IRealEstateRepository {
         return reDAO.list();
     }
 
+    public List<RealEstate> readDataUser(int userid) {
+        return reDAO.getListREOfUser(userid);
+    }
+
+    public void addNewREAdmin(RealEstate r) {
+        reDAO.insert(r);
+    }
+
     @Override
     public void save() {
 
@@ -50,9 +58,23 @@ public class RealEstateRepository implements IRealEstateRepository {
     public RealEstate delete(RealEstate r) {
         return reDAO.delete(Integer.parseInt(r.getID()));
     }
+
     public void update(RealEstate r) {
         reDAO.update(r);
-    } 
+    }
+
+    public void updateUser(RealEstate r, int userid) {
+        reDAO.userUpdate(r, userid);
+    }
+
+    public RealEstate deleteREUser(RealEstate r, int userid) {
+        return reDAO.userDeleteRE(Integer.parseInt(r.getID()), userid);
+    }
+
+    public void addNewREUser(RealEstate r, int userid) {
+        reDAO.userInsert(r, userid);
+    }
+
     public static void main(String[] args) {
         RealEstateRepository n = new RealEstateRepository();
         List<RealEstate> l = new ArrayList<>();

@@ -268,16 +268,16 @@ public class RealEstateController extends Menu {
             public void execute(int ch) {
                 switch (ch) {
                     case 1 ->
-                        System.out.println("Hien thi tat ca bds");
+                        displayListREUser();
                     case 2 ->
                         managementSearchREByCriteria();
                     case 3 ->
-                        System.out.println("Viet ham edit bds ma user so huu");
+                        editListREUser();
                     case 4 ->
-                        System.out.println("Xoa bds ma user so huu");
+                        deleteREUser();
                     case 5 ->
-                        System.out.println("Add"); //Đăng cần sửa hàm này để khi add sẽ có tên chủ sở hữu chính là id của ông user này
-                    case 6 ->{
+                        addNewREUser();
+                    case 6 -> {
                         Transaction newTrans = tvi.createTransactionBuyRE(authService.getLoggedInUser().getUserId());
                         if (newTrans != null) transService.add(newTrans);
                     }
@@ -291,36 +291,87 @@ public class RealEstateController extends Menu {
         };
         menu.run();
     }
-    
-   private void runStatisticsMenu() {
+
+    public void displayListREUser() {
+        User loggedUser = authService.getLoggedInUser();
+        reView.displayListREUser(reSer.getListRealEstateUser(loggedUser.getUserId()), loggedUser);
+    }
+
+    public void editListREUser() {
+        displayListREUser();
+        int id = 0;
+        User loggedUser = authService.getLoggedInUser();
+        while (true) {
+            id = v.getValidInteger("Enter id of RE you want to edit: ");
+            if (!reSer.isREOwnedByUser(loggedUser.getUserId(), id)) {
+                System.out.println("This id not belong to " + loggedUser.getFirstName() + " " + loggedUser.getLastName());
+                continue;
+            }
+            break;
+        }
+        reSer.updateREUser(id, loggedUser.getUserId());
+    }
+
+    public void deleteREUser() {
+        displayListREUser();
+        int id = 0;
+        User loggedUser = authService.getLoggedInUser();
+        while (true) {
+            id = v.getValidInteger("Enter id of RE you want to edit: ");
+            if (!reSer.isREOwnedByUser(loggedUser.getUserId(), id)) {
+                System.out.println("This id not belong to " + loggedUser.getFirstName() + " " + loggedUser.getLastName());
+                continue;
+            }
+            break;
+        }
+        RealEstate reSelected = reSer.getSpecificRE(String.valueOf(id));
+        reSer.deleteREUser(id, loggedUser.getUserId());
+        reView.displayNotification(reSelected, "delete");
+    }
+
+    public void addNewREUser() {
+        User loggedUser = authService.getLoggedInUser();
+        int userid = loggedUser.getUserId();
         String[] options = {
-            "Revenue Statistics",
-            "Number of Houses Sold",
-            "Houses Sold by Month",
-            "Customers Buying Real Estate by Month",
-            "Exit"
+            "Add new house",
+            "Add new villa",
+            "Add new land",
+            "Add new apartment",
+            "Return to main menu"
         };
-        Menu menu = new Menu("Transaction Statistics", options) {
+        Menu displayingREMenu = new Menu("Add New RE", options) {
+
             @Override
             public void execute(int ch) {
                 switch (ch) {
                     case 1 -> {
-                        double revenue = transactionService.getTotalRevenue();
-                        statsView.displayTotalRevenue(revenue);
+                        reSer.addNewREUser(reView.getInformationHouse("user"), userid);
+                        reView.addSuccessRE("HOUSE");
                     }
                     case 2 -> {
-                        int totalSold = transactionService.getTotalHousesSold();
-                        statsView.displayTotalHousesSold(totalSold);
+                        reSer.addNewREUser(reView.getInformationVilla("user"), userid);
+                        reView.addSuccessRE("VILLA");
                     }
-                    case 3 -> processHousesSoldByMonth();
-                    case 4 -> processBuyersByMonth();
-                    case 5 -> this.stop();
+                    case 3 -> {
+                        reSer.addNewREUser(reView.getInformationLand("user"), userid);
+                        reView.addSuccessRE("LAND");
+                    }
+                    case 4 -> {
+                        reSer.addNewREUser(reView.getInformationApartment("user"), userid);
+                        reView.addSuccessRE("APARTMENT");
+                    }
+                    case 5 -> {
+                        this.stop();
+                    }
+                    default ->
+                        System.out.println("Invalid choice. Please try again.");
                 }
             }
         };
-        menu.run();
+        displayingREMenu.run();
     }
-   
+
+
     private void managementDisplayListREAdmin() {
         String[] options = {
             "Display list house",
@@ -401,13 +452,14 @@ public class RealEstateController extends Menu {
             id = v.getValidInteger("Enter id of RE you want to delete: ");
             if (!reSer.isExistREInSystem(String.valueOf(id))) {
                 System.out.println("This id not existed in system.");
+                continue;
             }
             break;
         }
         reRepo.readData();
-        RealEstate selectedRE = reRepo.findEstateById(String.valueOf(id));
+        RealEstate selectedRE = reSer.getSpecificRE(String.valueOf(id));
         reSer.delete(String.valueOf(id));
-        reView.displayNotification(selectedRE, "delete ");
+        reView.displayNotification(selectedRE, "delete");
     }
 
     public void managementEditREAdmin() {
@@ -428,6 +480,35 @@ public class RealEstateController extends Menu {
         Map<String, Object> criteria = reView.getUserSearchByCriteria(typeRE);
         List<RealEstate> reList = reSer.searchByCriteria(criteria, typeRE);
         reView.displaySearchResults(reList);
+    }
+    
+    private void runStatisticsMenu() {
+        String[] options = {
+            "Revenue Statistics",
+            "Number of Houses Sold",
+            "Houses Sold by Month",
+            "Customers Buying Real Estate by Month",
+            "Exit"
+        };
+        Menu menu = new Menu("Transaction Statistics", options) {
+            @Override
+            public void execute(int ch) {
+                switch (ch) {
+                    case 1 -> {
+                        double revenue = transactionService.getTotalRevenue();
+                        statsView.displayTotalRevenue(revenue);
+                    }
+                    case 2 -> {
+                        int totalSold = transactionService.getTotalHousesSold();
+                        statsView.displayTotalHousesSold(totalSold);
+                    }
+                    case 3 -> processHousesSoldByMonth();
+                    case 4 -> processBuyersByMonth();
+                    case 5 -> this.stop();
+                }
+            }
+        };
+        menu.run();
     }
     
     private void processHousesSoldByMonth() {

@@ -27,9 +27,15 @@ public class RealEstateService implements IRealEstateService {
     private List<RealEstate> reList = reRepo.readData();
     private RealEstateView reView = new RealEstateView();
     private RealEstateDAO reDAO = new RealEstateDAO();
+
     public boolean isExistREInSystem(String id) {
         return reRepo.findEstateById(id) != null;
     }
+    
+    public RealEstate getSpecificRE(String id) {
+        return reRepo.findEstateById(id);
+    }
+
     
     public RealEstate getREInSystem(String id){
         return reRepo.findEstateById(id);
@@ -84,9 +90,35 @@ public class RealEstateService implements IRealEstateService {
         return reList;
     }
 
+    public List<RealEstate> getListRealEstateUser(int userid) {
+        return reRepo.readDataUser(userid);
+    }
+    
+    public boolean isREOwnedByUser(int userid, int reid) {
+        boolean result = false;
+        List<RealEstate> reL = this.getListRealEstateUser(userid);
+        for (RealEstate realEstate : reL) {
+            if (realEstate.getID().equals(String.valueOf(reid))) {
+                result = true;
+            }
+        }
+        return result;
+    }
+    public void updateREUser(int id, int userid) {
+        RealEstate selectedRE = reRepo.findEstateById(String.valueOf(id));
+        reView.menuEdit(selectedRE);
+        reRepo.updateUser(selectedRE, userid);
+    }
+    public void deleteREUser(int id, int userid) {
+        RealEstate selectedRE = reRepo.findEstateById(String.valueOf(id));
+        reRepo.deleteREUser(selectedRE, userid);
+    }
+    public void addNewREUser(RealEstate r, int userid) {
+        reRepo.addNewREUser(r, userid);
+    }
     @Override
     public void add(RealEstate t) {
-        reDAO.insert(t);
+        reRepo.addNewREAdmin(t);
     }
 
     @Override
