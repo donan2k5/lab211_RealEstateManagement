@@ -552,4 +552,24 @@ public class RealEstateDAO extends DBContext<RealEstate> {
             System.out.println(realEstate.getID());
         }
     }
+
+    public void updateRealEstateStatus(int reid) {
+        String sql = "UPDATE [realestate] SET is_sold = ? WHERE realestateid = ?";
+
+        try (PreparedStatement stm = connection.prepareStatement(sql)) {
+            stm.setBoolean(1, true);  
+            stm.setInt(2, reid); 
+
+            int rowsAffected = stm.executeUpdate();
+
+            if (rowsAffected > 0) {
+                System.out.println("[SUCCESS] Updated is_sold status for realestate_id: " + reid);
+            } else {
+                System.out.println("[INFO] No records found for realestate_id: " + reid);
+            }
+        } catch (SQLException ex) {
+            System.out.println("[ERROR] Failed to update realestate: " + ex.getMessage());
+        }
+    }
+
 }

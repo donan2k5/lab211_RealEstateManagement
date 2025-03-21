@@ -2,7 +2,6 @@ package model;
 
 import java.time.LocalDate;
 
-
 public class Transaction {
     private int transID;
     private int REID;
@@ -12,10 +11,20 @@ public class Transaction {
     private double deposit;
     private LocalDate expirationTime;
     private String status;
+    private boolean isDeleted;
     private LocalDate createTime;
     private LocalDate updateTime;
 
-    public Transaction(int transID, int REID, int sellerID, int buyerID, double price, double deposit, LocalDate expirationTime, String status, LocalDate createTime, LocalDate updateTime) {
+    public Transaction(int REID, int sellerID, int buyerID, double price, double deposit, LocalDate expirationTime) {
+        this.REID = REID;
+        this.sellerID = sellerID;
+        this.buyerID = buyerID;
+        this.price = price;
+        this.deposit = deposit;
+        this.expirationTime = expirationTime;
+    }
+
+    public Transaction(int transID, int REID, int sellerID, int buyerID, double price, double deposit, LocalDate expirationTime, String status, boolean isDeleted, LocalDate createTime, LocalDate updateTime) {
         this.transID = transID;
         this.REID = REID;
         this.sellerID = sellerID;
@@ -24,9 +33,10 @@ public class Transaction {
         this.deposit = deposit;
         this.expirationTime = expirationTime;
         this.status = status;
+        this.isDeleted = isDeleted;
         this.createTime = createTime;
         this.updateTime = updateTime;
-    }
+    }    
 
     public Transaction() {
     }
@@ -111,6 +121,14 @@ public class Transaction {
         this.updateTime = updateTime;
     }
 
+    public boolean isIsDeleted() {
+        return isDeleted;
+    }
+
+    public void setIsDeleted(boolean isDeleted) {
+        this.isDeleted = isDeleted;
+    }
+    
     @Override
     public String toString() {
         return transID + "," + REID + "," + sellerID + "," + buyerID + "," + price + "," + deposit + "," + expirationTime + "," + status + "," + createTime + "," + updateTime;

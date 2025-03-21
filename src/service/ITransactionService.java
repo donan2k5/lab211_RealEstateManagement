@@ -11,8 +11,9 @@ import model.Transaction;
  *
  * @author ADMIN
  */
-public interface ITransactionService extends Service<Transaction>{
-    List<Transaction> getPendingTransactionList();
+public interface ITransactionService{
+    public List<Transaction> getPendingTransactionList(String status);
     List<Transaction> getAllTransactionList();
-    
+    public void add(Transaction t);
+    public void delete(int id);
 }

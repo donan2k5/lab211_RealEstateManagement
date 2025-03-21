@@ -78,39 +78,30 @@ public class TransactionView {
     }
     
     public Transaction createTransactionBuyRE(int buyerID){
-        //counting transaction ID
-        int transID = tr.getLastID() + 1;
-        
-        int REID = v.getValidInteger("Enter id of RE you want to buy: ");
-
-        //dang bi loi REID la String ben RealEstate
-        RealEstate estate = rr.findEstateById(REID);
-        
-        //return null neu khong tim duoc RealEstate can mua
-        if (estate == null) {
-            showMsg("Cant find RealEstate with ID " + REID + "!");
-            return null;
+        int REID;
+        RealEstate realEstate;
+        while(true) {
+            REID = v.getValidInteger("Enter id of RE you want to buy: ");
+            realEstate = rr.findEstateById(String.valueOf(REID));
+            if(realEstate != null) {
+                break;
+            }
+            System.out.println("Real estate not found");
         }
-        
+
         //display RE
-        rv.displaySearchSingleResult(estate);
+        rv.displaySearchSingleResult(realEstate);
         
-        //get property's owner, dang bi loi vi Owner la String ben RealEstate, can OwnerID (chua co method)
-        int sellerID = estate.getOwner();
+        int sellerID = realEstate.getOwner();
         
         //display price and get deposit 10% -> 50% price
-        double price = estate.getPrice();
+        double price = realEstate.getPrice();
         showMsg("This property is currently priced at " + price + "\n");
         double deposit = v.checkValidDouble("Please enter the deposit amount: ", "Value must be from 10% to 50% the price! (" + price/10 + " to " + price/2 + ")!", price/10, price/2);
         
-        //set status default pending
-        String status = "Pending";
-        
         LocalDate today = LocalDate.now();
         LocalDate expirationTime = today.plusDays(10);
-        LocalDate createTime = today;
-        LocalDate updateTime = today;
-        
-        return new Transaction(transID, REID, sellerID, buyerID, price, deposit, expirationTime, status, createTime, updateTime);
+         
+        return new Transaction(REID, sellerID, buyerID, price, deposit, expirationTime);
     }
 }

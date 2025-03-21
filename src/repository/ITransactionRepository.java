@@ -16,6 +16,6 @@ public interface ITransactionRepository{
         List<Transaction> findTransactionsByREID(int id);
         List<Transaction> findTransactionBySellerID(int id);
         List<Transaction> findTransactionByBuyerID(int id);
-        void deleteTransaction(Transaction t);
+        void deleteTransaction(int id);
         void save(Transaction t);
 }
