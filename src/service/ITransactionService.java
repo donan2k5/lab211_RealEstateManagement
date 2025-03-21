@@ -3,7 +3,7 @@ package service;
 import java.util.List;
 import model.User;
 
-public interface TransactionService {
+public interface ITransactionService {
     double getTotalRevenue();
     int getTotalHousesSold();
     int getHousesSoldByMonth(int month, int year);

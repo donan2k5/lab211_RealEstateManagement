@@ -7,10 +7,9 @@ import model.RealEstate;
 import model.User;
 import repository.impl.RealEstateRepository;
 import service.AuthenticationService;
-import service.TransactionService;
 import service.impl.RealEstateService;
 import service.impl.AuthenticationServiceImpl;
-import service.impl.TransactionServiceImpl;
+import service.impl.TransactionService;
 import service.impl.UserServiceImpl;
 import utils.Utils;
 import view.AuthenticationView;
@@ -31,7 +30,7 @@ public class RealEstateController extends Menu {
     private Validation v = new Validation();
     private final UserManagementView umView = new UserManagementView();
     private final Scanner sc = new Scanner(System.in);
-    private final TransactionService transactionService = new TransactionServiceImpl();
+    private final TransactionService transactionService = new TransactionService();
     private final TransactionStatisticsView statsView = new TransactionStatisticsView();
 
     public RealEstateController() {
