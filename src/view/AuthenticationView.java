@@ -94,7 +94,7 @@ public class AuthenticationView {
                 .firstName(firstName)
                 .email(email)
                 .gender(gender)
-                .roleId(0)
+                .roleId(1)
                 .isDelete(0)
                 .phone(phone)
                 .build();
