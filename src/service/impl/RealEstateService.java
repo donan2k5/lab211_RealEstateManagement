@@ -30,6 +30,10 @@ public class RealEstateService implements IRealEstateService {
     public boolean isExistREInSystem(String id) {
         return reRepo.findEstateById(id) != null;
     }
+    
+    public RealEstate getREInSystem(String id){
+        return reRepo.findEstateById(id);
+    }
 
     @Override
     public List<House> getListHouse() {
@@ -137,6 +141,10 @@ public class RealEstateService implements IRealEstateService {
             }
         }
         return results;
+    }
+
+    void updateRealEstateStatus(int reid) {
+        reRepo.updateRealEstateStatus(reid);
     }
 
 }
