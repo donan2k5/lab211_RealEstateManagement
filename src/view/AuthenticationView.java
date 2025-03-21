@@ -30,6 +30,26 @@ public class AuthenticationView {
         System.out.println("Logging out " + username);
     }
 
+    public String getGenDer() {
+        int choice = 0;
+        System.out.println("Select gender:");
+        while (true) {
+            System.out.println("1. Male");
+            System.out.println("2. Female");
+            choice = validation.getValidInteger("Enter your choice: ");
+            switch (choice) {
+                case 1 -> {
+                    return "Male";
+                }
+                case 2 -> {
+                    return "Female";
+                }
+                default ->
+                    System.out.println("Invalid choice, pls try again.");
+            }
+        }
+    }
+
     public User getUserDetails() {
         String username = "";
         while (true) {
@@ -50,10 +70,33 @@ public class AuthenticationView {
                 "^\\S+$",
                 "INVALID pattern, enter again: "
         );
-
+        String lastName = validation.getStringRegex(
+                "Enter last name: ",
+                "^\\S+$",
+                "INVALID pattern, enter again: "
+        );
+        String firstName = validation.getStringRegex(
+                "Enter first name: ",
+                "^\\S+$",
+                "INVALID pattern, enter again: "
+        );
+        String email = validation.getStringRegex(
+                "Enter email name: ",
+                "^^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$",
+                "INVALID pattern, enter again: "
+        );
+        String phone = validation.getStringRegex("Enter phone number: ", "^0\\d{9}$", "Invalid input, try again!");
+        String gender = this.getGenDer();
         return new User.UserBuilder()
                 .username(username)
                 .password(password)
+                .lastName(lastName)
+                .firstName(firstName)
+                .email(email)
+                .gender(gender)
+                .roleId(0)
+                .isDelete(0)
+                .phone(phone)
                 .build();
     }
 
