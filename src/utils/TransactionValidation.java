@@ -101,10 +101,10 @@ public class TransactionValidation {
             System.out.println(msg);
             input = sc.nextLine().trim();
             if(isInputEmpty(input)) continue;
-            if(input.matches("(?i)^(Pending|Accepted|Denied)$")){
+            if(input.matches("(?i)^(Pending|Completed|Cancelled)$")){
                 return firstCharacterUppercase(input);
             }
-            System.out.println("Please choose 1 in 3 status {Pending, Accepted, Denied}");
+            System.out.println("Please choose 1 in 3 status {Pending, Completed, Cancelled}");
         }
     }
 }
