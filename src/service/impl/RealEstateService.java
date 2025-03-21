@@ -31,9 +31,16 @@ public class RealEstateService implements IRealEstateService {
     public boolean isExistREInSystem(String id) {
         return reRepo.findEstateById(id) != null;
     }
+    
     public RealEstate getSpecificRE(String id) {
         return reRepo.findEstateById(id);
     }
+
+    
+    public RealEstate getREInSystem(String id){
+        return reRepo.findEstateById(id);
+    }
+
     @Override
     public List<House> getListHouse() {
         List<House> houseList = new ArrayList<>();
@@ -166,6 +173,10 @@ public class RealEstateService implements IRealEstateService {
             }
         }
         return results;
+    }
+
+    void updateRealEstateStatus(int reid) {
+        reRepo.updateRealEstateStatus(reid);
     }
 
 }

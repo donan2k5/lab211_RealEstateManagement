@@ -31,7 +31,7 @@ public class RealEstateRepository implements IRealEstateRepository {
     public RealEstate findEstateById(String id) {
         return reDAO.get(Integer.parseInt(id));
     }
-
+    
     @Override
     public List<RealEstate> readData() {
         return reDAO.list();
@@ -82,5 +82,9 @@ public class RealEstateRepository implements IRealEstateRepository {
         for (RealEstate realEstate : l) {
             System.out.println(realEstate.toString());
         }
+    }
+
+    public void updateRealEstateStatus(int reid) {
+        reDAO.updateRealEstateStatus(reid);
     }
 }
