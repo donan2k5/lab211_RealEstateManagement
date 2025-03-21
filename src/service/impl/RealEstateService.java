@@ -143,4 +143,8 @@ public class RealEstateService implements IRealEstateService {
         return results;
     }
 
+    void updateRealEstateStatus(int reid) {
+        reRepo.updateRealEstateStatus(reid);
+    }
+
 }

@@ -1,7 +1,5 @@
 package controller;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import model.RealEstate;
@@ -273,7 +271,7 @@ public class RealEstateController extends Menu {
                     case 4 ->
                         System.out.println("Xoa bds ma user so huu");
                     case 5 ->
-                        managementAddNewRE(); //Đăng cần sửa hàm này để khi add sẽ có tên chủ sở hữu chính là id của ông user này
+                        System.out.println("Add"); //Đăng cần sửa hàm này để khi add sẽ có tên chủ sở hữu chính là id của ông user này
                     case 6 ->{
                         Transaction newTrans = tvi.createTransactionBuyRE(authService.getLoggedInUser().getUserId());
                         if (newTrans != null) transService.add(newTrans);
