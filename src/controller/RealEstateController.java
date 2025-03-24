@@ -278,6 +278,9 @@ public class RealEstateController extends Menu {
                     case 5 ->
                         System.out.println("Add"); //Đăng cần sửa hàm này để khi add sẽ có tên chủ sở hữu chính là id của ông user này
                     case 6 ->{
+                        System.out.println("For example: ");
+                        reView.displaySearchSingleResult(reSer.getListVilla().getFirst());
+                        
                         Transaction newTrans = tvi.createTransactionBuyRE(authService.getLoggedInUser().getUserId());
                         if (newTrans != null) transService.add(newTrans);
                     }
