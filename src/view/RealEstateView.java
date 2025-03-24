@@ -495,10 +495,10 @@ public class RealEstateView implements IRealEstateView {
             System.out.println("Not any result matches.");
             return;
         }
-        System.out.printf("%-20s%-15s%-15s\n",
-                "Name", "Price", "Owner");
-        System.out.printf("%-20s%-15s%-15s\n",
-        result.getName(), result.getPrice(), result.getOwner());
+        System.out.printf("%-15s%-20s%-15s%-15s\n",
+                "ID","Name", "Price", "Owner");
+        System.out.printf("%-15s%-20s%-15s%-15s\n",
+        result.getID(),result.getName(), result.getPrice(), result.getOwner());
     }
 
     public static void main(String[] args) {

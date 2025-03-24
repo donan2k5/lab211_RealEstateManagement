@@ -281,7 +281,7 @@ public class TransactionDAO extends DBContext<Transaction> {
                 + "price = ?, "
                 + "deposit_amount = ?, "
                 + "expiration_date = ?, "
-                + "status = ?, "
+                + "status = ? "
                 + "WHERE transactionid = ? AND isdelete = 0";
         try (PreparedStatement stm = connection.prepareStatement(sql)) {
             stm.setInt(1, transaction.getREID());
