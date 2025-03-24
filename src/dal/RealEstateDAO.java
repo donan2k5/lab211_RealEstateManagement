@@ -401,18 +401,35 @@ public class RealEstateDAO extends DBContext<RealEstate> {
                 + "    city = ?, \n"
                 + "    updated_at = GETDATE(),\n"
                 + "    additional_service = ?\n"
-                + "WHERE realestateid = ?";
+                + "WHERE realestateid = ? and ownerid = ?";
+
         int reID = Integer.parseInt(entity.getID());
-        try (PreparedStatement pst = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            pst.setInt(17, reID);
+        try (PreparedStatement pst = connection.prepareStatement(sql)) {
             pst.setString(1, entity.getName());
             pst.setDouble(2, entity.getPrice());
             pst.setDouble(3, entity.getArea());
-            pst.setString(12, entity.getStreet());
-            pst.setString(13, entity.getWard());
-            pst.setString(14, entity.getDistrict());
-            pst.setString(15, entity.getCity());
-            if (entity instanceof Land) {
+
+            if (entity instanceof Villa) {
+                pst.setInt(4, ((Villa) entity).getFloorCount());
+                pst.setInt(5, ((Villa) entity).getRoomCount());
+                pst.setBoolean(6, ((Villa) entity).isIsHaveDiningroom());
+                pst.setBoolean(7, ((Villa) entity).isIsHaveKitchen());
+                pst.setBoolean(8, ((Villa) entity).isIsHaveTerrace());
+                pst.setBoolean(9, ((Villa) entity).isIsHaveCarPark());
+                pst.setDouble(10, ((Villa) entity).getPoolArea());
+                pst.setNull(11, java.sql.Types.VARCHAR);
+                pst.setNull(16, java.sql.Types.VARCHAR);
+            } else if (entity instanceof Apartment) {
+                pst.setInt(4, ((Apartment) entity).getFloorCount());
+                pst.setInt(5, ((Apartment) entity).getRoomCount());
+                pst.setBoolean(6, ((Apartment) entity).isIsHaveDiningroom());
+                pst.setBoolean(7, ((Apartment) entity).isIsHaveKitchen());
+                pst.setBoolean(8, ((Apartment) entity).isIsHaveTerrace());
+                pst.setBoolean(9, ((Apartment) entity).isIsHaveCarPark());
+                pst.setNull(10, java.sql.Types.DOUBLE);
+                pst.setNull(11, java.sql.Types.VARCHAR);
+                pst.setString(16, ((Apartment) entity).getAdditionalService());
+            } else if (entity instanceof Land) {
                 pst.setNull(4, java.sql.Types.INTEGER);
                 pst.setNull(5, java.sql.Types.INTEGER);
                 pst.setNull(6, java.sql.Types.BIT);
@@ -423,38 +440,24 @@ public class RealEstateDAO extends DBContext<RealEstate> {
                 pst.setString(11, ((Land) entity).getLandType());
                 pst.setNull(16, java.sql.Types.VARCHAR);
             } else {
-                if (entity instanceof Villa) {
-                    pst.setInt(4, ((Villa) entity).getFloorCount());
-                    pst.setInt(5, ((Villa) entity).getRoomCount());
-                    pst.setBoolean(6, ((Villa) entity).isIsHaveDiningroom());
-                    pst.setBoolean(7, ((Villa) entity).isIsHaveKitchen());
-                    pst.setBoolean(8, ((Villa) entity).isIsHaveTerrace());
-                    pst.setBoolean(9, ((Villa) entity).isIsHaveCarPark());
-                    pst.setDouble(10, ((Villa) entity).getPoolArea());
-                    pst.setNull(11, java.sql.Types.VARCHAR);
-                    pst.setNull(16, java.sql.Types.VARCHAR);
-                } else if (entity instanceof Apartment) {
-                    pst.setInt(4, ((Apartment) entity).getFloorCount());
-                    pst.setInt(5, ((Apartment) entity).getRoomCount());
-                    pst.setBoolean(6, ((Apartment) entity).isIsHaveDiningroom());
-                    pst.setBoolean(7, ((Apartment) entity).isIsHaveKitchen());
-                    pst.setBoolean(8, ((Apartment) entity).isIsHaveTerrace());
-                    pst.setBoolean(9, ((Apartment) entity).isIsHaveCarPark());
-                    pst.setNull(10, java.sql.Types.DOUBLE);
-                    pst.setNull(11, java.sql.Types.VARCHAR);
-                    pst.setString(16, ((Apartment) entity).getAdditionalService());
-                } else {
-                    pst.setInt(4, ((House) entity).getFloorCount());
-                    pst.setInt(5, ((House) entity).getRoomCount());
-                    pst.setBoolean(6, ((House) entity).isIsHaveDiningroom());
-                    pst.setBoolean(7, ((House) entity).isIsHaveKitchen());
-                    pst.setBoolean(8, ((House) entity).isIsHaveTerrace());
-                    pst.setBoolean(9, ((House) entity).isIsHaveCarPark());
-                    pst.setNull(10, java.sql.Types.DOUBLE);
-                    pst.setNull(11, java.sql.Types.VARCHAR);
-                    pst.setNull(12, java.sql.Types.VARCHAR);
-                }
+                pst.setInt(4, ((House) entity).getFloorCount());
+                pst.setInt(5, ((House) entity).getRoomCount());
+                pst.setBoolean(6, ((House) entity).isIsHaveDiningroom());
+                pst.setBoolean(7, ((House) entity).isIsHaveKitchen());
+                pst.setBoolean(8, ((House) entity).isIsHaveTerrace());
+                pst.setBoolean(9, ((House) entity).isIsHaveCarPark());
+                pst.setNull(10, java.sql.Types.DOUBLE);
+                pst.setNull(11, java.sql.Types.VARCHAR);
+                pst.setNull(12, java.sql.Types.VARCHAR);
             }
+
+            pst.setString(12, entity.getStreet());
+            pst.setString(13, entity.getWard());
+            pst.setString(14, entity.getDistrict());
+            pst.setString(15, entity.getCity());
+            pst.setInt(17, reID); 
+            pst.setInt(18, userid); 
+
             int affectedRows = pst.executeUpdate();
             if (affectedRows > 0) {
                 return entity;

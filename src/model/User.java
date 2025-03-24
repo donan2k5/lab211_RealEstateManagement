@@ -92,7 +92,7 @@ public class User {
             return this;
         }
 
-        public UserBuilder delete(int isDelete) {
+        public UserBuilder isDelete(int isDelete) {
             this.isDelete = isDelete;
             return this;
         }

@@ -12,6 +12,7 @@ import model.Apartment;
 import model.House;
 import model.Land;
 import model.RealEstate;
+import model.User;
 import model.Villa;
 import repository.impl.RealEstateRepository;
 import repository.UserRepository;
@@ -30,6 +31,35 @@ public class RealEstateView implements IRealEstateView {
 
     {
         reRepo.readData();
+    }
+
+    public String getTypeRE(RealEstate r) {
+        if (r instanceof Villa) {
+            return "Villa";
+        } else if (r instanceof Apartment) {
+            return "Apartment";
+        } else if (r instanceof House) {
+            return "House";
+        } else {
+            return "Land";
+        }
+    }
+
+    public void displayListREUser(List<RealEstate> reList, User u) {
+        if (reList.isEmpty()) {
+            System.out.println("User do not have any realestate.");
+            return;
+        }
+        System.out.println("RE list of " + u.getFirstName() + " " + u.getLastName() + ": ");
+        System.out.printf("%-10s%-60s%-15s%-15s%-15s%-50s\n",
+                "Id", "Name", "Type",
+                "Price", "Area", "Address");
+        for (RealEstate realEstate : reList) {
+            String address = realEstate.getStreet() + "," + realEstate.getWard() + "," + realEstate.getDistrict() + "," + realEstate.getCity();
+            System.out.printf("%-10s%-60s%-15s%-15s%-15s%-50s\n",
+                    realEstate.getID(), realEstate.getName(), this.getTypeRE(realEstate),
+                    realEstate.getPrice(), realEstate.getArea(), address);
+        }
     }
 
     @Override
@@ -422,10 +452,10 @@ public class RealEstateView implements IRealEstateView {
             return;
         }
         System.out.println("Results:");
-        System.out.printf("%-20s%-15s%-15s\n",
+        System.out.printf("%-60s%-20s%-20s\n",
                 "Name", "Price", "Owner");
         for (RealEstate result : results) {
-            System.out.printf("%-20s%-15s%-15s\n",
+            System.out.printf("%-60s%-20s%-20s\n",
                     result.getName(), result.getPrice(), result.getOwner());
         }
     }
@@ -454,9 +484,9 @@ public class RealEstateView implements IRealEstateView {
 
     public void displayNotification(RealEstate r, String action) {
         if (r == null) {
-            System.out.println("You " + action + "failed.");
+            System.out.println("You " + action + " " + r.getName() + "(" + r.getID() + ")" + " failed.");
         } else {
-            System.out.println("You " + action + "success.");
+            System.out.println("You " + action + " " + r.getName() + "(" + r.getID() + ")" + " success.");
         }
     }
     

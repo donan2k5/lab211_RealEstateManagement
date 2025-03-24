@@ -45,7 +45,7 @@ public class UserDAO extends DBContext<User> {
                             .email(rs.getString("email"))
                             .gender(rs.getString("gender"))
                             .roleId(rs.getInt("roleid"))
-                            .delete(rs.getInt("isdelete"))
+                            .isDelete(rs.getInt("isdelete"))
                             .createdAt(rs.getTimestamp("created_at").toLocalDateTime().toLocalDate())
                             .updatedAt(rs.getTimestamp("updated_at").toLocalDateTime().toLocalDate())
                             .build();
@@ -94,7 +94,7 @@ public class UserDAO extends DBContext<User> {
                         .email(rs.getString("email"))
                         .gender(rs.getString("gender"))
                         .roleId(rs.getInt("roleid"))
-                        .delete(rs.getInt("isdelete"))
+                        .isDelete(rs.getInt("isdelete"))
                         .build();
                 userList.add(user);
             }
@@ -121,7 +121,7 @@ public class UserDAO extends DBContext<User> {
                             .email(rs.getString("email"))
                             .gender(rs.getString("gender"))
                             .roleId(rs.getInt("roleid"))
-                            .delete(rs.getInt("isdelete"))
+                            .isDelete(rs.getInt("isdelete"))
                             .build();
                 }
             }
