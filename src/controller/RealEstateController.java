@@ -1,5 +1,6 @@
 package controller;
 
+import dto.HousePredict;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
@@ -11,6 +12,7 @@ import repository.impl.TransactionRepository;
 import service.AuthenticationService;
 import service.impl.RealEstateService;
 import service.impl.AuthenticationServiceImpl;
+import service.impl.HousePredictServiceImpl;
 import service.impl.TransactionService;
 import utils.TransactionValidation;
 import service.impl.UserServiceImpl;
@@ -22,8 +24,10 @@ import view.TransactionStatisticsView;
 import view.TransactionView;
 import view.UserManagementView;
 import view.Validation;
+import service.HousePredictService;
 
 public class RealEstateController extends Menu {
+
     private final TransactionValidation tval = new TransactionValidation();
     private final TransactionRepository transRepo = new TransactionRepository();
     private final TransactionService transService = new TransactionService();
@@ -39,6 +43,7 @@ public class RealEstateController extends Menu {
     private final Scanner sc = new Scanner(System.in);
     private final TransactionService transactionService = new TransactionService();
     private final TransactionStatisticsView statsView = new TransactionStatisticsView();
+    private final HousePredictService housePredictService = new HousePredictServiceImpl();
 
     public RealEstateController() {
         super("=== Register or Login to continue ===", new String[]{
@@ -261,6 +266,7 @@ public class RealEstateController extends Menu {
             "Add Real Estate", //Dang
             "Buy Real Estate", //Khôi 
             "View contract", //Khôi (Xem lại tất cả các hợp đồng về căn nhà mà mình đã bán và mua
+            "Predict house price",
             "Return to main menu"
         };
         Menu menu = new Menu("Customer Menu", options) {
@@ -279,11 +285,23 @@ public class RealEstateController extends Menu {
                         addNewREUser();
                     case 6 -> {
                         Transaction newTrans = tvi.createTransactionBuyRE(authService.getLoggedInUser().getUserId());
-                        if (newTrans != null) transService.add(newTrans);
+                        if (newTrans != null) {
+                            transService.add(newTrans);
+                        }
                     }
                     case 7 ->
                         tvi.displayListTransaction(transService.getAllTransactionByUserID(authService.getLoggedInUser().getUserId())); //viewTransactionHistory; //System.out.println("Gọi hàm liệt kê danh sách bđs mua, bán của user này"); //Khôi
                     case 8 -> {
+                        HousePredict housePredict = reView.getInformationHousePredict();
+                        housePredictService.predict(housePredict);
+                        try {
+                            double price = Double.parseDouble(housePredictService.predict(housePredict));
+                            reView.displayResultHousePredict(price);
+                        } catch (Exception e) {
+                            System.out.println(e.getMessage());
+                        }
+                    }
+                    case 9 -> {
                         this.stop();
                     }
                 }
@@ -370,7 +388,6 @@ public class RealEstateController extends Menu {
         };
         displayingREMenu.run();
     }
-
 
     private void managementDisplayListREAdmin() {
         String[] options = {
@@ -481,7 +498,7 @@ public class RealEstateController extends Menu {
         List<RealEstate> reList = reSer.searchByCriteria(criteria, typeRE);
         reView.displaySearchResults(reList);
     }
-    
+
     private void runStatisticsMenu() {
         String[] options = {
             "Revenue Statistics",
@@ -502,15 +519,18 @@ public class RealEstateController extends Menu {
                         int totalSold = transactionService.getTotalHousesSold();
                         statsView.displayTotalHousesSold(totalSold);
                     }
-                    case 3 -> processHousesSoldByMonth();
-                    case 4 -> processBuyersByMonth();
-                    case 5 -> this.stop();
+                    case 3 ->
+                        processHousesSoldByMonth();
+                    case 4 ->
+                        processBuyersByMonth();
+                    case 5 ->
+                        this.stop();
                 }
             }
         };
         menu.run();
     }
-    
+
     private void processHousesSoldByMonth() {
         try {
             System.out.print("Enter month (1-12): ");
@@ -552,9 +572,9 @@ public class RealEstateController extends Menu {
             System.out.println("Invalid input! Please enter numeric values for month and year.");
         }
     }
+
     public static void main(String[] args) {
         RealEstateController realEstateController = new RealEstateController();
         realEstateController.run();
     }
 }
-    
