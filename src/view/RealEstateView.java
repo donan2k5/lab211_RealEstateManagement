@@ -4,6 +4,7 @@
  */
 package view;
 
+import dto.HousePredict;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -489,22 +490,33 @@ public class RealEstateView implements IRealEstateView {
             System.out.println("You " + action + " " + r.getName() + "(" + r.getID() + ")" + " success.");
         }
     }
-    
+
     public void displaySearchSingleResult(RealEstate result) {
         if (result == null) {
             System.out.println("Not any result matches.");
             return;
         }
         System.out.printf("%-15s%-20s%-15s%-15s\n",
-                "ID","Name", "Price", "Owner");
+                "ID", "Name", "Price", "Owner");
         System.out.printf("%-15s%-20s%-15s%-15s\n",
-        result.getID(),result.getName(), result.getPrice(), result.getOwner());
+                result.getID(), result.getName(), result.getPrice(), result.getOwner());
     }
 
-    public static void main(String[] args) {
-        Validation v = new Validation();
-        RealEstateView rv = new RealEstateView();
-        boolean result = rv.getUserChooseYesNo("ạd");
-        System.out.println(result);
+    public HousePredict getInformationHousePredict() {
+        double area = v.getValidDouble("Enter area (m²): ");
+        int floors = v.getValidInteger("Enter number of floors: ");
+        int bedrooms = v.getValidInteger("Enter number of bedrooms: ");
+        int bathrooms = v.getValidInteger("Enter number of bathrooms: ");
+        double frontage = v.getValidDouble("Enter frontage width (m): ");
+        double roadWidth = v.getValidDouble("Enter road width (m): ");
+
+        String address = v.getStringRegex("Enter address (e.g., street, ward, district): ", "^.*$", "Invalid input, enter again: ");
+
+        return new HousePredict(area, floors, bedrooms, bathrooms, frontage, roadWidth, address);
     }
+
+    public void displayResultHousePredict(double price) {
+        System.out.printf("Predicted house price: %.2f VND\n", price);
+    }
+
 }
