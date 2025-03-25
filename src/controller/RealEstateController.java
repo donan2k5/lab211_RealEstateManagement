@@ -284,6 +284,8 @@ public class RealEstateController extends Menu {
                     case 5 ->
                         addNewREUser();
                     case 6 -> {
+                        System.out.println("For example: ");
+                        reView.displaySearchSingleResult(reSer.getListVilla().getFirst());
                         Transaction newTrans = tvi.createTransactionBuyRE(authService.getLoggedInUser().getUserId());
                         if (newTrans != null) {
                             transService.add(newTrans);
